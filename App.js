@@ -17,7 +17,7 @@ class LoginScreen extends Component{
 
         //Validation here...
 
-        return fetch("http://localhost:3333/api/1.0.0/login", {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/login", {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'
