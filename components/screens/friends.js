@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, Button, StyleSheet,} from 'react-native';
+import {View, Text, FlatList, Button, StyleSheet, TextInput} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 class FriendsScreen extends Component {
@@ -8,7 +9,11 @@ class FriendsScreen extends Component {
     super(props);
 
     this.state = {
-      listdata: []
+      listdata: [],
+      searchdata: [],
+      name: "",
+      first_name: "",
+      last_name: ""
     }
   }
 
@@ -61,21 +66,72 @@ class FriendsScreen extends Component {
             console.log(error);
         })
   }
+ getUserSearch = async () => {
+  const value = await AsyncStorage.getItem('@session_token');
+  const value2 = await AsyncStorage.getItem('@user_id');
+  console.log(value2)
+  return fetch("http://10.0.2.2:3333/api/1.0.0/search", {
+    method: 'get',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization':  value
+        },
+    })
+      .then((response) => {
+          if(response.status === 200){
+              return response.json()
+          }else if(response.status === 401){
+            this.props.navigation.navigate("Login");
+          }else{
+              throw 'Something went wrong';
+          }
+      })
+      .then((responseJson) => {
+        this.setState({
+          searchdata: responseJson
+        })
+      })
+      .catch((error) => {
+          console.log(error);
+      })
+}
+
+compareNames = () => {
+
+
+
+
+}
+
 
   render() {
       return (
           <View style= {Styles.container}>
             <View style = {Styles.button}>
+              <TextInput
+                placeholder="Enter Friend Name..."
+                placeholderTextColor= 'white'
+                color= 'white'
+                style={{padding:5, borderWidth:1, margin:5}}
+                borderColor= "black"
+                onChangeText={(name) => this.setState({name})}
+                value={this.state.name}
+              />
               <Button
-                title="     Add Friend     "
+                title="Add Friend"
                 color="rgb(32,32,32)"
+                
               />
               <Button 
                 title="Friend Requests"
-                color="rgb(32,32,32)"
+                color="darkred"
                 onPress={() => this.props.navigation.navigate("Friend Requests")}
               />
+              
             </View>
+              <View style = {Styles.textbox}>
+              <Text style= {Styles.text2}>Friends List</Text>
+              </View>
               <FlatList
                 data={this.state.listdata}
                 renderItem={({item}) => (
@@ -106,10 +162,22 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
   },
+  text2: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 24,
+    justifyContent: 'center',
+  },
+  textbox: {
+   marginLeft: 130,
+  },
   button: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    padding:1,
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
   }
 
 })

@@ -9,7 +9,7 @@ import LoginScreen from './components/screens/login';
 import SignupScreen from './components/screens/signup';
 import LogoutScreen from './components/screens/logout';
 import FriendsScreen from './components/screens/friends';
-import FriendsreqScreen from './components/friendreq';
+import FriendsreqScreen from './components/screens/friendreq';
 
 
 const Stack =createNativeStackNavigator();
