@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, Button} from 'react-native';
+import {View, Text, FlatList, Button, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -17,7 +17,6 @@ class HomeScreen extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-  
     this.getData();
   }
 
@@ -60,8 +59,7 @@ class HomeScreen extends Component {
   };
 
   render() {
-
-    if (this.state.isLoading){
+    if (this.state.isLoading == true){
       return (
         <View
           style={{
@@ -75,10 +73,11 @@ class HomeScreen extends Component {
       );
     }else{
       return (
-        <View>
+        <View style= {styles.container}>
           <Button
           title = 'Friends'
           onPress={() => this.props.navigation.navigate("Friends")}
+
           />
         </View>
       );
@@ -87,6 +86,13 @@ class HomeScreen extends Component {
   }
 }
 
+  const styles = StyleSheet.create({
+    container: {
+      flex:1,
+      backgroundColor: 'rgb(32,32,32)',
+    },
 
+
+  })
 
 export default HomeScreen;

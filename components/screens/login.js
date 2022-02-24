@@ -50,7 +50,7 @@ class LoginScreen extends Component{
             <View style= {styles.container}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
                   <View style= {styles.box}>
-                    <Text style= {styles.text}>Spacebook</Text>
+                    <Text style= {styles.text}>Welcome To Spacebook</Text>
                     <TextInput
                         placeholder="Enter your email..."
                         placeholderTextColor= 'white'
@@ -94,8 +94,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    //fontWeight: 'bold',
-    marginLeft: 138,
+    fontWeight: 'bold',
+    marginLeft: 55,
+    fontSize: 24,
   },
   box: {
     backgroundColor: 'rgb(64,64,64)',

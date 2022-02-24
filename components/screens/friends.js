@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, FlatList, Button, StyleSheet,} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -9,7 +9,6 @@ class FriendsScreen extends Component {
 
     this.state = {
       listdata: []
-
     }
   }
 
@@ -18,40 +17,12 @@ class FriendsScreen extends Component {
       this.checkLoggedIn();
     });
 
-    this.getFriends();
+    this.getFriendsList();
   };
 
   componentWillUnmount() {
     this.unsubscribe();
   }
-
-  // getData = async () => {
-  //   const value = await AsyncStorage.getItem('@session_token');
-    
-  //   return fetch("http://10.0.2.2:3333/api/1.0.0/search", {
-  //         'headers': {
-  //           'X-Authorization':  value
-  //         }
-  //       })
-  //       .then((response) => {
-  //           if(response.status === 200){
-  //               return response.json()
-  //           }else if(response.status === 401){
-  //             this.props.navigation.navigate("Login");
-  //           }else{
-  //               throw 'Something went wrong';
-  //           }
-  //       })
-  //       .then((responseJson) => {
-  //         this.setState({
-  //           isLoading: false,
-  //           listData: responseJson
-  //         })
-  //       })
-  //       .catch((error) => {
-  //           console.log(error);
-  //       })
-  // }
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -61,7 +32,7 @@ class FriendsScreen extends Component {
   };
 
 
-  getFriends = async () => {
+  getFriendsList = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     console.log(value2)
@@ -91,25 +62,56 @@ class FriendsScreen extends Component {
         })
   }
 
-
   render() {
-
       return (
-        <View>
-          <FlatList
+          <View style= {Styles.container}>
+            <View style = {Styles.button}>
+              <Button
+                title="     Add Friend     "
+                color="rgb(32,32,32)"
+              />
+              <Button 
+                title="Friend Requests"
+                color="rgb(32,32,32)"
+                onPress={() => this.props.navigation.navigate("Friend Requests")}
+              />
+            </View>
+              <FlatList
                 data={this.state.listdata}
                 renderItem={({item}) => (
-                    <View>
-                      <Text>{item.user_givenname} {item.user_familyname}</Text>
-                    </View>
-                )}
+                  <View style= {Styles.box}>
+                    <Text style = {Styles.text}>
+                      {item.user_givenname} {item.user_familyname}
+                    </Text>
+                  </View>
+                    )}
                 keyExtractor={(item,index) => item.user_id.toString()}
               />
-        </View>
+          </View>
       );
+    }
+}
+
+const Styles = StyleSheet.create({
+  container: {
+    flex:1,
+    backgroundColor: 'rgb(64,64,64)',
+  },
+  box: {
+    backgroundColor: 'rgb(255,255,255)',
+    padding: 10,
+  },
+  text: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 24,
+  },
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
   }
 
-
-}
+})
 
 export default FriendsScreen;

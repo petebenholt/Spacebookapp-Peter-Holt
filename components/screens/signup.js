@@ -16,7 +16,7 @@ class SignupScreen extends Component{
     signup = () => {
         //Validation here...
 
-        return fetch("http://localhost:3333/api/1.0.0/user", {
+        return fetch("http://10.0.2.2:3333/api/1.0.0/user", {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'
