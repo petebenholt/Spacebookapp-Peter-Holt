@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, FlatList, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -17,7 +17,7 @@ class FriendsreqScreen extends Component {
       this.checkLoggedIn();
     });
 
-    this.getFriendsList();
+   this.getFriendsReq();
   };
 
   componentWillUnmount() {
@@ -35,7 +35,7 @@ class FriendsreqScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     console.log(value2)
-    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests"+value2, {
+    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests", {
       method: 'get',
       headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,18 @@ class FriendsreqScreen extends Component {
   render(){
     return(
       <View>
-        <Text>Hello</Text>
+        <FlatList
+                data={this.state.listdata}
+                renderItem={({item}) => (
+                  <View>
+                    <Text>
+                      {item.first_name} {item.last_name}
+                    </Text>
+                  </View>
+                    )}
+                keyExtractor={(item,index) => item.user_id.toString()}
+              />
+
       
       
       </View>

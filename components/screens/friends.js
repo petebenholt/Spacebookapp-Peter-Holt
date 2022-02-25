@@ -13,7 +13,8 @@ class FriendsScreen extends Component {
       searchdata: [],
       name: "",
       first_name: "",
-      last_name: ""
+      last_name: "",
+      gotUserID: ""
     }
   }
 
@@ -27,7 +28,7 @@ class FriendsScreen extends Component {
 
   componentWillUnmount() {
     this.unsubscribe();
-  }
+  };
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -40,7 +41,7 @@ class FriendsScreen extends Component {
   getFriendsList = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    console.log(value2)
+    //console.log(value2)
     return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/friends", {
       method: 'get',
       headers: {
@@ -90,20 +91,68 @@ class FriendsScreen extends Component {
         this.setState({
           searchdata: responseJson
         })
+        //console.log(this.state.searchdata)
+        this.splitnames();
+        this.addFriend();
       })
       .catch((error) => {
           console.log(error);
       })
+  
 }
-
-compareNames = () => {
-
-
-
-
+splitnames = () => {
+  let namedata = this.state.name;
+  let searchdata2 = this.state.searchdata;
+  
+  let myArray = namedata.split(" ");
+  //console.log(myArray);
+  this.state.first_name = myArray[0];
+  this.state.last_name = myArray[1];
+  //console.log(searchdata2);
+  
+  for (let i = 0; i < searchdata2.length; i++) {
+    //console.log(searchdata2[i].user_givenname);
+    if(searchdata2[i].user_givenname == this.state.first_name && searchdata2[i].user_familyname == this.state.last_name){
+      console.log(searchdata2[i].user_givenname);
+      console.log(searchdata2[i].user_id);
+      this.state.gotUserID = searchdata2[i].user_id;
+    }
+  
+  }
+  console.log(this.state.gotUserID)
 }
-
-
+  addFriend = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    //const value2 = await AsyncStorage.getItem('@user_id');
+    gotUserID = this.state.gotUserID;
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+gotUserID+"/friends", {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization':  value
+          },
+      })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+            }else if(response.status === 401){
+              this.props.navigation.navigate("Login");
+            }else if(response.status === 403){
+              console.log("User is already added as a friend")
+            }else if(response.status === 404){
+              console.log("Not Found")
+            }
+            else{
+                throw 'server error';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    
+  }
+  
+  
   render() {
       return (
           <View style= {Styles.container}>
@@ -120,6 +169,7 @@ compareNames = () => {
               <Button
                 title="Add Friend"
                 color="rgb(32,32,32)"
+                onPress={() => this.getUserSearch()}
                 
               />
               <Button 
