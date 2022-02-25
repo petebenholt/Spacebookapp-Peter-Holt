@@ -8,7 +8,7 @@ class FriendsreqScreen extends Component {
     super(props);
 
     this.state = {
-      listdata: []
+      listdata: [],
 
     }
   }
@@ -61,23 +61,101 @@ class FriendsreqScreen extends Component {
         })
   }
 
+  addFriendreq = async (UserID) => {
+    const value = await AsyncStorage.getItem('@session_token');
+    //const value2 = await AsyncStorage.getItem('@user_id');
+    //gotUserID = userID;
+    //console.log(gotUserID);
+    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization':  value
+          },
+      })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+                
+            }else if(response.status === 401){
+              console.log("unauthorised")
+            }else if(response.status === 404){
+              console.log("not found")
+            }else if(response.status === 500){
+              console.log("server error")
+            }
+            else{
+                throw 'server error';
+            }
+          this.getFriendsReq();
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    
+  }
+
+  declineFriendReq = async (UserID) => {
+    const value = await AsyncStorage.getItem('@session_token');
+    //const value2 = await AsyncStorage.getItem('@user_id');
+    //gotUserID = userID;
+    //console.log(gotUserID);
+    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
+      method: 'delete',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization':  value
+          },
+      })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+            }else if(response.status === 401){
+              console.log("unauthorised")
+            }else if(response.status === 404){
+              console.log("not found")
+            }else if(response.status === 500){
+              console.log("server error")
+            }
+            else{
+                throw 'server error';
+            }
+            this.getFriendsReq();
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    
+  }
+
+
   render(){
     return(
       <View>
         <FlatList
-                data={this.state.listdata}
-                renderItem={({item}) => (
-                  <View>
-                    <Text>
-                      {item.first_name} {item.last_name}
-                    </Text>
-                  </View>
-                    )}
-                keyExtractor={(item,index) => item.user_id.toString()}
+          data={this.state.listdata}
+          renderItem={({item}) => (
+            
+            <View>
+              <Text>
+                {item.first_name} {item.last_name}
+                
+              </Text>
+              <Button
+                title="Add Friend"
+                color="rgb(32,32,32)"
+                onPress={() => this.addFriendreq(item.user_id)}
               />
-
-      
-      
+              <Button
+                title="Decline Friend Request"
+                color="rgb(32,32,32)"
+                onPress={() => this.declineFriendReq(item.user_id)}
+              />
+            </View>
+              )}
+          keyExtractor={(item,index) => item.user_id.toString()}
+        />
+        
       </View>
 
     );

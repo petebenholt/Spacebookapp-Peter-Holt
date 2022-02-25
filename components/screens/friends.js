@@ -14,7 +14,7 @@ class FriendsScreen extends Component {
       name: "",
       first_name: "",
       last_name: "",
-      gotUserID: ""
+      gotuserID: ""
     }
   }
 
@@ -115,16 +115,16 @@ splitnames = () => {
     if(searchdata2[i].user_givenname == this.state.first_name && searchdata2[i].user_familyname == this.state.last_name){
       console.log(searchdata2[i].user_givenname);
       console.log(searchdata2[i].user_id);
-      this.state.gotUserID = searchdata2[i].user_id;
+      this.state.gotuserID = searchdata2[i].user_id;
     }
   
   }
-  console.log(this.state.gotUserID)
+  //console.log(this.state.gotUserID)
 }
   addFriend = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
-    gotUserID = this.state.gotUserID;
+    let gotUserID = this.state.gotuserID;
     return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+gotUserID+"/friends", {
       method: 'post',
       headers: {
@@ -158,7 +158,7 @@ splitnames = () => {
           <View style= {Styles.container}>
             <View style = {Styles.button}>
               <TextInput
-                placeholder="Enter Friend Name..."
+                placeholder="Add Friend Name..."
                 placeholderTextColor= 'white'
                 color= 'white'
                 style={{padding:5, borderWidth:1, margin:5}}

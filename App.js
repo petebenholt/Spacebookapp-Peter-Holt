@@ -10,6 +10,7 @@ import SignupScreen from './components/screens/signup';
 import LogoutScreen from './components/screens/logout';
 import FriendsScreen from './components/screens/friends';
 import FriendsreqScreen from './components/screens/friendreq';
+import ProfileScreen from './components/screens/profile';
 
 
 const Stack =createNativeStackNavigator();
@@ -85,6 +86,19 @@ function App() {
         <Stack.Screen 
         name ="Friend Requests" 
         component={FriendsreqScreen}
+        options={{ 
+          headerStyle: 
+          {backgroundColor: 'black' 
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          }} 
+        />
+        <Stack.Screen 
+        name ="Profile" 
+        component={ProfileScreen}
         options={{ 
           headerStyle: 
           {backgroundColor: 'black' 

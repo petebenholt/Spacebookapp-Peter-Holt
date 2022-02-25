@@ -75,10 +75,16 @@ class HomeScreen extends Component {
       return (
         <View style= {styles.container}>
           <Button
+          title = 'Profile'
+          onPress={() => this.props.navigation.navigate("Friends")}
+
+          />
+          <Button
           title = 'Friends'
           onPress={() => this.props.navigation.navigate("Friends")}
 
           />
+          
         </View>
       );
     }
