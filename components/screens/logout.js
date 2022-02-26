@@ -50,7 +50,6 @@ class HomeScreen extends Component{
         })
         .catch((error) => {
             console.log(error);
-            ToastAndroid.show(error, ToastAndroid.SHORT);
         })
     }
 

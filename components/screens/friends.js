@@ -15,6 +15,7 @@ class FriendsScreen extends Component {
       first_name: "",
       last_name: "",
       gotuserID: ""
+      
     }
   }
 

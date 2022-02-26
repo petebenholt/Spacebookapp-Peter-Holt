@@ -9,6 +9,8 @@ class FriendsreqScreen extends Component {
 
     this.state = {
       listdata: [],
+      refresh: false
+      
 
     }
   }
@@ -61,7 +63,7 @@ class FriendsreqScreen extends Component {
         })
   }
 
-  addFriendreq = async (UserID) => {
+  addFriendreq = async (UserID,item) => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     //gotUserID = userID;
@@ -87,7 +89,7 @@ class FriendsreqScreen extends Component {
             else{
                 throw 'server error';
             }
-          this.getFriendsReq();
+          this.remove(item)
         })
         .catch((error) => {
             console.log(error);
@@ -95,7 +97,7 @@ class FriendsreqScreen extends Component {
     
   }
 
-  declineFriendReq = async (UserID) => {
+  declineFriendReq = async (UserID, item) => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     //gotUserID = userID;
@@ -120,20 +122,28 @@ class FriendsreqScreen extends Component {
             else{
                 throw 'server error';
             }
-            this.getFriendsReq();
+          this.remove(item)
         })
         .catch((error) => {
             console.log(error);
         })
     
   }
-
+  
+  remove = (item) => {
+    //console.log(index);
+    let newList = this.state.listdata;
+    newList.splice(item, 1);
+    this.setState({items: newList});
+  }
 
   render(){
     return(
       <View>
         <FlatList
           data={this.state.listdata}
+          //extraData={this.state.refresh = true}
+          keyExtractor={(item,index) => item.user_id.toString()}
           renderItem={({item}) => (
             
             <View>
@@ -144,16 +154,20 @@ class FriendsreqScreen extends Component {
               <Button
                 title="Add Friend"
                 color="rgb(32,32,32)"
-                onPress={() => this.addFriendreq(item.user_id)}
+                onPress={() => this.addFriendreq(item.user_id, item)}
+                
+                
               />
               <Button
                 title="Decline Friend Request"
                 color="rgb(32,32,32)"
-                onPress={() => this.declineFriendReq(item.user_id)}
+                onPress={() => this.declineFriendReq(item.user_id,item) }
+               
+                
               />
             </View>
               )}
-          keyExtractor={(item,index) => item.user_id.toString()}
+          
         />
         
       </View>
