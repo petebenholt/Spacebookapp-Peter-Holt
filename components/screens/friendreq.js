@@ -1,22 +1,21 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, Button} from 'react-native';
+import {View, Text, FlatList, Button,useState} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 class FriendsreqScreen extends Component {
   constructor(props){
     super(props);
-
+    
     this.state = {
       listdata: [],
       refresh: false
-      
-
     }
   }
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
+
     });
 
    this.getFriendsReq();
@@ -63,7 +62,7 @@ class FriendsreqScreen extends Component {
         })
   }
 
-  addFriendreq = async (UserID,item) => {
+  addFriendreq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     //gotUserID = userID;
@@ -89,19 +88,25 @@ class FriendsreqScreen extends Component {
             else{
                 throw 'server error';
             }
-          this.remove(item)
+          
+        })
+        .then(() => {
+          this.getFriendsReq();
+          console.log('success');
+
         })
         .catch((error) => {
             console.log(error);
         })
-    
+        
   }
 
-  declineFriendReq = async (UserID, item) => {
+  declineFriendReq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     //gotUserID = userID;
     //console.log(gotUserID);
+    
     return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
       method: 'delete',
       headers: {
@@ -112,6 +117,8 @@ class FriendsreqScreen extends Component {
         .then((response) => {
             if(response.status === 200){
                 return response.json()
+                this.getFriendsReq();
+        console.log('success');
             }else if(response.status === 401){
               console.log("unauthorised")
             }else if(response.status === 404){
@@ -122,30 +129,30 @@ class FriendsreqScreen extends Component {
             else{
                 throw 'server error';
             }
-          this.remove(item)
         })
         .catch((error) => {
             console.log(error);
-        })
-    
+          })
   }
   
-  remove = (item) => {
-    //console.log(index);
-    let newList = this.state.listdata;
-    newList.splice(item, 1);
-    this.setState({items: newList});
-  }
+  //  remove = (keyExtractor) => {
+  //   //console.log(index);
+  //   let newList = this.state.listdata;
+  //   newList.splice(item);
+  //   this.setState({listdata: newList});
+  //  }
+  //remove = () => {
+    //this.props.navigation.navigate('Friends');
+  //}
 
   render(){
     return(
       <View>
         <FlatList
           data={this.state.listdata}
-          //extraData={this.state.refresh = true}
-          keyExtractor={(item,index) => item.user_id.toString()}
+          extraData={this.state}
+          keyExtractor={(item, index) => item.user_id.toString()}
           renderItem={({item}) => (
-            
             <View>
               <Text>
                 {item.first_name} {item.last_name}
@@ -154,20 +161,19 @@ class FriendsreqScreen extends Component {
               <Button
                 title="Add Friend"
                 color="rgb(32,32,32)"
-                onPress={() => this.addFriendreq(item.user_id, item)}
-                
-                
+                onPress={() => this.addFriendreq(item.user_id)}
+                //onPress={() => this.state.refresh = !this.state.refresh }
               />
               <Button
                 title="Decline Friend Request"
                 color="rgb(32,32,32)"
-                onPress={() => this.declineFriendReq(item.user_id,item) }
+                onPress={() => this.declineFriendReq(item.user_id) }
+                //onPress={() => this.state.refresh = !this.state.refresh }
                
-                
               />
+
             </View>
               )}
-          
         />
         
       </View>

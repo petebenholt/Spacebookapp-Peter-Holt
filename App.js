@@ -13,6 +13,8 @@ import FriendsreqScreen from './components/screens/friendreq';
 import ProfileScreen from './components/screens/profile';
 
 
+
+
 const Stack =createNativeStackNavigator();
 function App() {
   return (
