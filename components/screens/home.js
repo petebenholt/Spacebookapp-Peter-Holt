@@ -36,16 +36,17 @@ class HomeScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     let text = this.state.postText;
+    let text2 = "text:"+text;
     //this.addtexttoarray();
     //postTextarray.push(postText)
     console.log(this.state.postText);
     return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/post", {
       method: 'post',
-      headers: {
+      'headers': {
           'Content-Type': 'application/json',
           'X-Authorization':  value
           },
-      body: JSON.stringify(text)
+      body: JSON.stringify(text2)
       })
         .then((response) => {
             if(response.status === 201){
