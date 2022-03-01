@@ -11,7 +11,7 @@ import LogoutScreen from './components/screens/logout';
 import FriendsScreen from './components/screens/friends';
 import FriendsreqScreen from './components/screens/friendreq';
 import ProfileScreen from './components/screens/profile';
-
+import EditProfileScreen from './components/screens/editprofile';
 
 
 
@@ -101,6 +101,19 @@ function App() {
         <Stack.Screen 
         name ="Profile" 
         component={ProfileScreen}
+        options={{ 
+          headerStyle: 
+          {backgroundColor: 'black' 
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          }} 
+        />
+        <Stack.Screen 
+        name ="editProfile" 
+        component={EditProfileScreen}
         options={{ 
           headerStyle: 
           {backgroundColor: 'black' 

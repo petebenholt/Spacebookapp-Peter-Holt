@@ -10,7 +10,8 @@ class ProfileScreen extends Component {
 
     this.state = {
       listdata: [],
-      newlist: []
+      newlist: [],
+      info: {}
     }
   }
 
@@ -19,7 +20,7 @@ class ProfileScreen extends Component {
       this.checkLoggedIn();
     });
 
-    this.getFriendsList();
+    this.getProfile();
   };
 
   componentWillUnmount() {
@@ -33,55 +34,51 @@ class ProfileScreen extends Component {
     }
   };
 
-
-  getFriendsList = async () => {
+  getProfile = async() => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    //console.log(value2)
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2, {
-      method: 'get',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization':  value
-          },
-      })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-              this.props.navigation.navigate("Login");
-            }else{
-                throw 'Something went wrong';
-            }
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + value2, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': value
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        console.log(responseJson);
+        this.setState({
+            //isLoading: false,
+            info: responseJson
         })
-        .then((responseJson) => {
-          this.setState({
-            listdata: responseJson,
-          })
-        this.fixItems();
-        console.log(this.state.listdata);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+    })
+    .catch((error) => {
+        console.log(error);
+    });
   }
+  
 
-  fixItems = () => {
-    let newdata = this.state.listdata;
-    let firstname = this.state.listdata.first_name.toString();
-    let lastname = this.state.listdata.last_name;
-    let email = this.state.listdata.email;
-    let friendcount = this.state.listdata.friendcount;
-    this.state.newlist = newdata, firstname, lastname, email, friendcount;
-  }
+  // fixItems = () => {
+  //   let newdata = this.state.listdata;
+  //   let firstname = this.state.listdata.first_name.toString();
+  //   let lastname = this.state.listdata.last_name;
+  //   let email = this.state.listdata.email;
+  //   let friendcount = this.state.listdata.friendcount;
+  //   this.state.newlist = newdata, firstname, lastname, email, friendcount;
+  // }
 
 
   render() {
-      return (
-          <View>
-            <Text> Hello </Text>
-
-          </View>
+    return (
+      <View>
+        <Text>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
+        <Text>Email-Address: {this.state.info.email}</Text>
+        <Text>Friend-Count: {this.state.info.friend_count}</Text>
+        <Button
+          title="Edit"
+          onPress={() => this.props.navigation.navigate("editProfile")}
+        />
+      </View>
       );
     }
 }
