@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Text, TextInput, View, Button, StyleSheet, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Camera } from 'expo-camera';
+import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 
 class EditProfileScreen extends Component {
@@ -12,7 +14,10 @@ class EditProfileScreen extends Component {
       first_name: "",
       last_name: "",
       email: "",
-      password: ""
+      password: "",
+      hasPermission: null,
+      type: Camera.Constants.Type.back
+
     }
   }
 
@@ -92,46 +97,67 @@ class EditProfileScreen extends Component {
     });
   }
   
+  
   render(){
     return (
       <View style={styles.container}>
+        <Text style= {{color: 'white'}}>First Name</Text>
         <TextInput 
         placeholder = {this.state.allinfo.first_name}
         onChangeText={(first_name) => this.setState({first_name})}
         defaultValue = {this.state.allinfo.first_name}
-        style = {styles.inputStyle}
+        style={{padding:5, borderWidth:1, margin:5}}
+        borderColor= "white"
+        color= 'white'
         />
-
+         <Text style= {{color: 'white'}}>Last Name</Text>
         <TextInput 
         placeholder = {this.state.allinfo.last_name}
         onChangeText={(last_name) => this.setState({last_name})}
         defaultValue = {this.state.allinfo.last_name}
-        style = {styles.inputStyle}
+        style={{padding:5, borderWidth:1, margin:5}}
+        borderColor= "white"
+        color= 'white'
         />
-
+         <Text style= {{color: 'white'}}>Email</Text>
         <TextInput 
         placeholder = {this.state.allinfo.email}
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
-        style = {styles.inputStyle}
+        style={{padding:5, borderWidth:1, margin:5}}
+        borderColor= "white"
+        color= 'white'
+        
         />
-            
+        <Text style= {{color: 'white'}}>Password</Text>  
         <TextInput
-        placeholder = "Enter new password"
+        placeholder = "Enter new password..."
         onChangeText={(password) => this.setState({password})}
-        style = {styles.inputStyle}
+        style={{padding:5, borderWidth:1, margin:5}}
         secureTextEntry={true}
+        borderColor= "white"
+        color= 'white'
+        placeholderTextColor= 'white'
         />
-
+        <View style = {styles.button}>
         <Button
-        style = {styles.button}
         title="Update"
+        color="purple"
         onPress={() => {
-            this.update()
+            this.profileUpdate()
             this.props.navigation.navigate("Home")
         }
         }
         />
+        <Button
+        title="Edit Profile Picture"
+        color="purple"
+        onPress={() => {
+            this.props.navigation.navigate("Edit Profile Picture")
+        }
+        }
+        />
+        </View>
       </View>
     );
   }
@@ -139,17 +165,22 @@ class EditProfileScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: 'column', 
-        justifyContent: 'flex-start', 
-        alignItems: 'flex-start' 
+      flex: 1,
+      flexDirection: 'column', 
+      justifyContent: 'flex-start', 
+      alignItems: 'flex-start',
+      backgroundColor: 'rgb(32,32,32)',
     },
 
     button: {
-        width: 150,
-        height: 150,
-        alignItems: 'center',
-        justifyContent: 'center'
+      flex: 1,
+      //width: 150,
+      //height: 150,
+      flexWrap: 'wrap',
+      //flexDirection: 'row',
+      alignContent: 'center',
+      justifyContent: 'flex-start',
+      //gap: 10
         
     },
 

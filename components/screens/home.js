@@ -8,9 +8,9 @@ class HomeScreen extends Component {
     super(props);
 
     this.state = {
-      postData: [],
+      postData: {},
       postText: '',
-      postDataText: []
+      postedData: {}
     }
   }
 
@@ -18,6 +18,7 @@ class HomeScreen extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
+    this.getPosted();
   }
 
   componentWillUnmount() {
@@ -35,10 +36,6 @@ class HomeScreen extends Component {
   postAPost = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    let text = this.state.postText;
-    let text2 = "text:"+text;
-    //this.addtexttoarray();
-    //postTextarray.push(postText)
     console.log(this.state.postText);
     return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/post", {
       method: 'post',
@@ -46,7 +43,9 @@ class HomeScreen extends Component {
           'Content-Type': 'application/json',
           'X-Authorization':  value
           },
-      body: JSON.stringify(text2)
+          body: JSON.stringify({
+            text: this.state.postText
+          })
       })
         .then((response) => {
             if(response.status === 201){
@@ -73,17 +72,29 @@ class HomeScreen extends Component {
         })
   }
 
-  // addtexttoarray = () => {
-  //   let text = this.state.postText;
-  //   let arr = this.state.postDataText;
-  //   arr.push(text);
-  //   console.log(arr);
-  //   let objectarr = Object.assign({}, arr);
-  //   arr.reduce((text) => ({ ...a, [v]: v}), {})
-  //   console.log(objectarr);
-  //   objectarr = this.state.postDataText;
+  getPosted = async() => {
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': sessionvalue
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        console.log(responseJson);
+        this.setState({
+          //isLoading: false,
+          postedData: responseJson
+        })
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+  }
 
-  // }
 
 
   render() {
@@ -91,11 +102,13 @@ class HomeScreen extends Component {
         <View style= {styles.container}>
           <Button
           title = 'Profile'
+          color='purple'
           onPress={() => this.props.navigation.navigate("Profile")}
 
           />
           <Button
           title = 'Friends'
+          color='purple'
           onPress={() => this.props.navigation.navigate("Friends")}
 
           />
@@ -109,22 +122,38 @@ class HomeScreen extends Component {
             style={{padding:5, borderWidth:1, margin:5}}
             borderColor= "white"
           />
-          <Button
+          <View style= {styles.buttonstyle}>
+          <Button 
           title = 'Add Post'
+          color='purple'
           onPress={() => this.postAPost()}
           />
+          </View>
           <FlatList
-                data={this.state.postData}
-                renderItem={({item}) => (
-                  <View>
-                    <Text>
-                      {item.text}
-                    </Text>
-                  </View>
-                    )}
-                //keyExtractor={(item,index) => item.user_id.toString()}
+            data={this.state.postedData}
+            keyExtractor={(item,index) => item.post_id.toString()}
+            renderItem={({item}) => (
+            <View style= {styles.listbox}>
+              <Text style = {{color: 'black'}}>
+              {item.author.first_name} {item.author.last_name} </Text>
+              <Text>Date:{item.timestamp}</Text>
+
+              <Text>{item.text}</Text>
+              <Text>Likes: {item.numLikes}</Text>
+              <View style= {styles.likesbutton}>
+              <Button
+                title='Like'
+                color='purple'
               />
-      
+              <Button
+                title='Dislike'
+                color='red'
+              />
+              </View>
+            </View>
+              )}
+            />
+
         </View>
       );
     }
@@ -134,8 +163,23 @@ class HomeScreen extends Component {
 
   const styles = StyleSheet.create({
     container: {
-      flex:1,
+      flex: 1,
       backgroundColor: 'rgb(32,32,32)',
+    },
+    listbox: {
+      padding: 20,
+      backgroundColor: 'white',
+      marginBottom: 10
+
+    },
+    buttonstyle: {
+      marginBottom: 10,
+    },
+    likesbutton: {
+      justifyContent: 'flex-start',
+      alignItems: 'stretch',
+      flexDirection: 'row',
+      marginRight:10,
     },
 
 

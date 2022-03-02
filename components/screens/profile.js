@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, Button, StyleSheet, TextInput} from 'react-native';
+import {View, Text, FlatList, Button, StyleSheet, TextInput, Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -11,7 +11,10 @@ class ProfileScreen extends Component {
     this.state = {
       listdata: [],
       newlist: [],
-      info: {}
+      info: {},
+      pfp: null,
+      postedData: []
+
     }
   }
 
@@ -21,6 +24,8 @@ class ProfileScreen extends Component {
     });
 
     this.getProfile();
+    this.getProfilePic();
+    this.getPosted();
   };
 
   componentWillUnmount() {
@@ -57,51 +62,128 @@ class ProfileScreen extends Component {
     });
   }
   
+  getProfilePic = async () => {
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    fetch("http://10.0.2.2:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
+      method: 'get',
+      headers: {
+        'X-Authorization': sessionvalue
+      }
+    })
+    .then((res) => {
+      return res.blob();
+    })
+    .then((resBlob) => {
+      let data = URL.createObjectURL(resBlob);
+      this.setState({
+        pfp: data,
+        isLoading: false
+      });
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+  }
 
-  // fixItems = () => {
-  //   let newdata = this.state.listdata;
-  //   let firstname = this.state.listdata.first_name.toString();
-  //   let lastname = this.state.listdata.last_name;
-  //   let email = this.state.listdata.email;
-  //   let friendcount = this.state.listdata.friendcount;
-  //   this.state.newlist = newdata, firstname, lastname, email, friendcount;
-  // }
+  getPosted = async() => {
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': sessionvalue
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        console.log(responseJson);
+        this.setState({
+          //isLoading: false,
+          postedData: responseJson
+        })
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+  }
 
+  
 
   render() {
     return (
-      <View>
-        <Text>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
-        <Text>Email-Address: {this.state.info.email}</Text>
-        <Text>Friend-Count: {this.state.info.friend_count}</Text>
+      <View style= {styles.container}>
+        <Image
+          source={{uri: this.state.pfp}}
+        />
+        <Text style= {styles.text}>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
+        <Text style= {styles.text}>Email: {this.state.info.email}</Text>
+        <Text style= {styles.text}>Friends: {this.state.info.friend_count}</Text>
         <Button
           title="Edit"
-          onPress={() => this.props.navigation.navigate("editProfile")}
+          color= "purple"
+          onPress={() => this.props.navigation.navigate("Edit Profile")}
         />
+        <Text style= {styles.text2}>Your Posts</Text>
+        <FlatList
+            data={this.state.postedData}
+            keyExtractor={(item,index) => item.post_id.toString()}
+            renderItem={({item}) => (
+            <View style= {styles.listbox}>
+              <Text style = {styles.text3}>
+              {item.author.first_name} {item.author.last_name} </Text>
+              <Text style = {styles.text3}>Date:{item.timestamp}</Text>
+              <Text>   </Text>
+              <Text styles= {styles.text3}> {item.text} </Text>
+              <Text>   </Text>
+              <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
+              <View style= {styles.likesbutton}>
+              <Button
+                title = "Delete Post"
+                color = "red"
+
+              />
+              </View>
+            </View>
+              )}
+            />
       </View>
       );
     }
 }
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex:1,
-    backgroundColor: 'rgb(64,64,64)',
+    backgroundColor: 'rgb(32,32,32)',
   },
   box: {
     backgroundColor: 'rgb(255,255,255)',
     padding: 10,
   },
   text: {
-    color: 'black',
+    color: 'white',
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 20,
   },
   text2: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 24,
     justifyContent: 'center',
+  },
+  text3: {
+    color: 'black',
+    //fontWeight: 'bold',
+    //fontSize: 24,
+    justifyContent: 'center',
+  },
+  feedtext: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 10,
+    
   },
   textbox: {
    marginLeft: 130,
@@ -113,7 +195,22 @@ const Styles = StyleSheet.create({
     marginLeft: 0,
     marginRight: 0,
     marginTop: 0,
-  }
+  },
+  listbox: {
+    padding: 20,
+    backgroundColor: 'white',
+    marginBottom: 10
+
+  },
+  buttonstyle: {
+    marginBottom: 10,
+  },
+  likesbutton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginRight:10,
+  },
 
 })
 

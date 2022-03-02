@@ -169,13 +169,13 @@ splitnames = () => {
               />
               <Button
                 title="Add Friend"
-                color="rgb(32,32,32)"
+                color='purple'
                 onPress={() => this.getUserSearch()}
                 
               />
               <Button 
                 title="Friend Requests"
-                color="darkred"
+                color="purple"
                 onPress={() => this.props.navigation.navigate("Friend Requests")}
               />
               
@@ -202,16 +202,17 @@ splitnames = () => {
 const Styles = StyleSheet.create({
   container: {
     flex:1,
-    backgroundColor: 'rgb(64,64,64)',
+    backgroundColor: 'rgb(32,32,32)',
   },
   box: {
-    backgroundColor: 'rgb(255,255,255)',
+    backgroundColor: 'purple',
     padding: 10,
+    marginBottom: 2
   },
   text: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 24,
+    color: 'white',
+    //fontWeight: 'bold',
+    fontSize: 15,
   },
   text2: {
     color: 'white',
