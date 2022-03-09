@@ -13,7 +13,8 @@ class HomeScreen extends Component {
       postedData: {},
       friendsdata: {},
       friendsUserIDs: [],
-      allposted: {}
+      allposted: {},
+      friendidjson: {}
     }
   }
 
@@ -81,11 +82,13 @@ class HomeScreen extends Component {
 
 
 
-  getPosted = async(userid) => {
+  getPosted = async() => {
+    console.log("getting")
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    let friendsID = this.state.friendidjson;
 
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+userid+'/post', {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+friendsID+'/post', {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -149,8 +152,10 @@ class HomeScreen extends Component {
     }
     console.log(this.state.friendsUserIDs);
     for (let i = 0; i < this.state.friendsUserIDs.length; i++) {
-      this.getPosted(this.state.friendsUserIDs[i]);
+      //this.getPosted(this.state.friendsUserIDs[i]);
+      this.state.friendidjson = JSON.stringify(this.state.friendsUserIDs);
     }
+    console.log(this.state.friendidjson);
   }
 
 
@@ -162,7 +167,38 @@ class HomeScreen extends Component {
 
 
 
-  
+  likePost = async(postID)=>{
+    const value = await AsyncStorage.getItem('@session_token');
+    let id = await AsyncStorage.getItem("@session_id");
+      
+    return fetch(this.state.postLink+"/user/"+id+"/post/"+postID+"/like",{
+      method:"POST",
+      headers:{
+        'X-Authorization':  value
+      }
+    })
+    .then((response) => {
+      if(response.status === 200){
+      }else if(response.status === 401){
+          throw 'Unauthorized'
+      }else if(response.status === 403){
+        throw 'already liked this post'
+      }else if(response.status === 404){
+        throw 'Not Found'
+      }else if(response.status === 500){
+        throw 'Server Error'
+      }else{
+          throw 'Something went wrong';
+      }
+    })
+    .then((responseJson) => {
+      console.log(responseJson);
+    })
+    .catch((error) => {
+        console.log(error);
+    }) 
+  }
+
 
 
 

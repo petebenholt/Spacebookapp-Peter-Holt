@@ -24,6 +24,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-paper": "^4.11.2",
     "react-native-reanimated": "~2.3.1",
@@ -33,7 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@expo/webpack-config": "^0.16.18"
+    "@expo/webpack-config": "^0.16.19"
   },
   "private": true
 }

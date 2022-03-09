@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 class EditProfilePicture extends Component{
   constructor(props){
     super(props);
@@ -24,12 +25,13 @@ class EditProfilePicture extends Component{
       console.log("hello")
       const sessionvalue = await AsyncStorage.getItem('@session_token');
       const UserIDvalue = await AsyncStorage.getItem('@user_id');
-      
+      console.log("success")
 
       let res = await fetch(data.base64);
       let blob = await res.blob();
+      console.log("success2")
 
-      return fetch("http:/10.0.2.2:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
+      return fetch("http://192.168.0.17:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
           method: "POST",
           headers: {
               "Content-Type": "image/png",
@@ -52,8 +54,7 @@ class EditProfilePicture extends Component{
                 base64: true,
                 onPictureSaved: (data) => this.sendToServer(data)
             };
-            console.log("pic taken")
-            await this.camera.takePictureAsync(options); 
+            await this.camera.takePictureAsync(options);
         } 
     }
 

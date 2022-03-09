@@ -4,17 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-class FriendsProfileScreen extends Component {
+class ViewPost extends Component {
   constructor(props){
     super(props);
 
     this.state = {
-      listdata: [],
-      newlist: [],
-      info: {},
-      pfp: null,
-      postedData: []
-
+      info: {}
     }
   }
 
@@ -23,8 +18,6 @@ class FriendsProfileScreen extends Component {
       this.checkLoggedIn();
     });
 
-    this.getProfile();
-    //this.getProfilePic();
     this.getPosted();
   };
 
@@ -40,60 +33,15 @@ class FriendsProfileScreen extends Component {
     }
   };
 
-  getProfile = async() => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const value2 = await AsyncStorage.getItem('@user_id');
-    const otheruserID = await AsyncStorage.getItem('other-user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + otheruserID, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Authorization': value
-        }
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-        console.log(responseJson);
-        this.setState({
-            //isLoading: false,
-            info: responseJson
-        })
-    })
-    .catch((error) => {
-        console.log(error);
-    });
-  }
+
   
-  // getProfilePic = async () => {
-  //   console.log("get profpic");
-  //   const sessionvalue = await AsyncStorage.getItem('@session_token');
-  //   const UserIDvalue = await AsyncStorage.getItem('@user_id');
-  //   fetch("http://10.0.2.2:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
-  //     method: 'get',
-  //     headers: {
-  //       'X-Authorization': sessionvalue
-  //     }
-  //   })
-  //   .then((res) => {
-  //     return res.blob();
-  //   })
-  //   .then((resBlob) => {
-  //     let data = URL.createObjectURL(resBlob);
-  //     this.setState({
-  //       pfp: data,
-  //       isLoading: false
-  //     });
-  //   })
-  //   .catch((error) => {
-  //     console.log(error)
-  //   });
-  // }
 
   getPosted = async() => {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
-    const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    const otheruserID = await AsyncStorage.getItem('other-user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+otheruserID+'/post', {
+    const postid = await AsyncStorage.getItem('postid');
+    const otherfriendid = await AsyncStorage.getItem('otherfriendid');
+    console.log("hello")
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+otherfriendid+'/post/'+postid, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -104,8 +52,7 @@ class FriendsProfileScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          //isLoading: false,
-          postedData: responseJson
+          info: responseJson
         })
     })
     .catch((error) => {
@@ -183,58 +130,19 @@ class FriendsProfileScreen extends Component {
     }) 
   }
 
-
-  ViewPost = async(postID, otherfriendid)=>{
-    await AsyncStorage.setItem('postid', postID.toString());
-    await AsyncStorage.setItem('otherfriendid', otherfriendid.toString());
-    this.props.navigation.navigate("Friend's Post");
-      
-  }
-
   render() {
     return (
-      <View style= {styles.container}>
-        <Image
-          source={{uri: this.state.pfp}}
-        />
-        <Text style= {styles.text}>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
-        <Text style= {styles.text}>Email: {this.state.info.email}</Text>
-        <Text style= {styles.text}>Friends: {this.state.info.friend_count}</Text>
-        <Text style= {styles.text2}>Their Posts</Text>
-        <FlatList
-            data={this.state.postedData}
-            extraData={this.props}
-            keyExtractor={(item,index) => item.post_id.toString()}
-            renderItem={({item}) => (
-            <View style= {styles.listbox}>
-              <Text style = {styles.text3}>
-              {item.author.first_name} {item.author.last_name} </Text>
-              <Text style = {styles.text3}>Date:{item.timestamp}</Text>
-              <Text>   </Text>
-              <Text styles= {styles.text3}> {item.text} </Text>
-              <Text>   </Text>
-              <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
-              <View style= {styles.likesbutton}>
-              <Button
-                title='Like'
-                color='purple'
-                onPress={() => this.likePost(item.post_id, item.author.user_id)}
-              />
-              <Button
-                title='Dislike'
-                color='red'
-                onPress={() => this.unlikePost(item.post_id, item.author.user_id)}
-              />
-              <Button
-                title='View Post'
-                color='red'
-                onPress={() => this.ViewPost(item.post_id, item.author.user_id)}
-              />
-              </View>
-            </View>
-              )}
-            />
-      </View>
+      <View>
+      {/* <Text>{this.state.info.author.first_name}</Text>
+      <Text>{this.state.info.timestamp}</Text>
+      <Text>{this.state.info.text}</Text>
+      <Text>
+        Likes:
+        {' '}
+        {this.state.postedData.numLikes}
+      </Text> */}
+    </View>
+        
       );
     }
 }
@@ -305,4 +213,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default FriendsProfileScreen;
+export default ViewPost;

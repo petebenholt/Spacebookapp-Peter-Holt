@@ -73,11 +73,11 @@ class ProfileScreen extends Component {
         'X-Authorization': sessionvalue
       }
     })
-    .then((res) => {
-      return res.blob();
+    .then((response) => {
+      return response.blob();
     })
     .then((resBlob) => {
-      let data = URL.createObjectURL(resBlob);
+      const data = URL.createObjectURL(resBlob);
       this.setState({
         pfp: data,
         isLoading: false
@@ -100,7 +100,7 @@ class ProfileScreen extends Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
-        console.log(responseJson);
+        //console.log(responseJson);
         this.setState({
           //isLoading: false,
           postedData: responseJson
@@ -137,9 +137,16 @@ class ProfileScreen extends Component {
     .catch((error) => {
         console.log(error);
     });
-
-
   }
+
+  editPosted = async(postid) => {
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    
+  }
+
+
+
   render() {
     return (
       <View style= {styles.container}>
@@ -174,6 +181,11 @@ class ProfileScreen extends Component {
               <Text>   </Text>
               <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
               <View style= {styles.likesbutton}>
+              <Button
+                title = "Edit Post"
+                color = "blue"
+                onPress={() => this.deletePosted(item.post_id)}
+              />
               <Button
                 title = "Delete Post"
                 color = "red"
