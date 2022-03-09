@@ -14,8 +14,9 @@ class FriendsScreen extends Component {
       name: "",
       first_name: "",
       last_name: "",
-      gotuserID: ""
-      
+      gotuserID: [],
+      matchedusers: [],
+      UserID: ""
     }
   }
 
@@ -23,7 +24,7 @@ class FriendsScreen extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
+    this.getData();
     this.getFriendsList();
   };
 
@@ -38,6 +39,13 @@ class FriendsScreen extends Component {
     }
   };
 
+  getData = async () => {
+    const UserID = await AsyncStorage.getItem('@user_id');
+    let UserID2 = UserID;
+    this.state.UserID = UserID2;
+  
+  }
+  
 
   getFriendsList = async () => {
     const value = await AsyncStorage.getItem('@session_token');
@@ -63,10 +71,16 @@ class FriendsScreen extends Component {
           this.setState({
             listdata: responseJson
           })
+        //this.getFriendsList();
         })
         .catch((error) => {
             console.log(error);
         })
+  }
+  
+  FriendsProfile= async (frienduserid)=>{
+    await AsyncStorage.setItem('other-user_id', frienduserid.toString());
+    this.props.navigation.navigate("Friends Profile");
   }
  getUserSearch = async () => {
   const value = await AsyncStorage.getItem('@session_token');
@@ -101,6 +115,48 @@ class FriendsScreen extends Component {
       })
   
 }
+
+
+getUserSearchQuery = async (name) => {
+  const value = await AsyncStorage.getItem('@session_token');
+  const value2 = await AsyncStorage.getItem('@user_id');
+
+  console.log(value2)
+  if(this.state.name == ""){
+    this.state.matchedusers == []
+  }
+  else{
+  return fetch("http://10.0.2.2:3333/api/1.0.0/search?q=" + name, {
+    method: 'get',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization':  value
+        },
+    })
+      .then((response) => {
+          if(response.status === 200){
+              return response.json()
+          }else if(response.status === 401){
+            this.props.navigation.navigate("Login");
+          }else{
+              throw 'Something went wrong';
+          }
+      })
+      .then((responseJson) => {
+        this.setState({
+          matchedusers: responseJson
+        })
+        //console.log(this.state.searchdata)
+        //this.splitnames();
+        //this.addFriend();
+        console.log("success")
+        this.getUserSearch();
+      })
+      .catch((error) => {
+          console.log(error);
+      })
+    }
+}
 splitnames = () => {
   let namedata = this.state.name;
   let searchdata2 = this.state.searchdata;
@@ -113,15 +169,17 @@ splitnames = () => {
   
   for (let i = 0; i < searchdata2.length; i++) {
     //console.log(searchdata2[i].user_givenname);
-    if(searchdata2[i].user_givenname == this.state.first_name && searchdata2[i].user_familyname == this.state.last_name){
+    if(searchdata2[i].user_givenname == this.state.first_name){
       console.log(searchdata2[i].user_givenname);
       console.log(searchdata2[i].user_id);
       this.state.gotuserID = searchdata2[i].user_id;
+      this.state.matchedusers = searchdata2[i].user_id;
     }
   
   }
   //console.log(this.state.gotUserID)
 }
+
   addFriend = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
@@ -152,6 +210,45 @@ splitnames = () => {
         })
     
   }
+  addMatchedFriend = async (userid) => {
+    const value = await AsyncStorage.getItem('@session_token');
+    //const value2 = await AsyncStorage.getItem('@user_id');
+    let gotUserID = this.state.gotuserID;
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+userid+"/friends", {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization':  value
+          },
+      })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+            }else if(response.status === 401){
+              this.props.navigation.navigate("Login");
+            }else if(response.status === 403){
+              console.log("User is already added as a friend")
+            }else if(response.status === 404){
+              console.log("Not Found")
+            }
+            else{
+                throw 'server error';
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    
+  }
+
+  friendReset = async ()=>{
+    if(this.state.name == ""){
+      this.state.matchedusers = [];
+
+    }
+  }
+
+
   
   
   render() {
@@ -167,10 +264,34 @@ splitnames = () => {
                 onChangeText={(name) => this.setState({name})}
                 value={this.state.name}
               />
+              <FlatList
+                data={this.state.matchedusers}
+                keyExtractor={(item,index) => item.user_id.toString()}
+                renderItem={({item}) => (
+                  <View style= {Styles.box}>
+                    <Text style = {Styles.text}>
+                      {item.user_givenname} {item.user_familyname}
+                    </Text>
+                    <Button 
+                      title="Add"
+                      color="purple"
+                      onPress={() => this.addMatchedFriend(item.user_id.toString())}
+                    />
+                  </View>
+                    )}
+                
+              />
+
               <Button
                 title="Add Friend"
                 color='purple'
                 onPress={() => this.getUserSearch()}
+                
+              />
+              <Button
+                title="Search Friend"
+                color='purple'
+                onPress={() => this.getUserSearchQuery(this.state.name)}
                 
               />
               <Button 
@@ -190,6 +311,12 @@ splitnames = () => {
                     <Text style = {Styles.text}>
                       {item.user_givenname} {item.user_familyname}
                     </Text>
+                    <Button 
+                      title="View Profile"
+                      color="purple"
+                      onPress={() => this.FriendsProfile(item.user_id)}
+                    />
+                    
                   </View>
                     )}
                 keyExtractor={(item,index) => item.user_id.toString()}

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, TextInput, View, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Alert, ScrollView, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Camera } from 'expo-camera';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import { TextInput } from 'react-native-paper';
 
 
 class EditProfileScreen extends Component {
@@ -106,38 +107,43 @@ class EditProfileScreen extends Component {
         placeholder = {this.state.allinfo.first_name}
         onChangeText={(first_name) => this.setState({first_name})}
         defaultValue = {this.state.allinfo.first_name}
-        style={{padding:5, borderWidth:1, margin:5}}
-        borderColor= "white"
-        color= 'white'
+        //style={{padding:5, borderWidth:1, margin:5}}
+        //borderColor= "white"
+        //color= 'white'
+        mode= 'outlined'
+        
         />
          <Text style= {{color: 'white'}}>Last Name</Text>
         <TextInput 
         placeholder = {this.state.allinfo.last_name}
         onChangeText={(last_name) => this.setState({last_name})}
         defaultValue = {this.state.allinfo.last_name}
-        style={{padding:5, borderWidth:1, margin:5}}
+        //style={{padding:5, borderWidth:1, margin:5}}
         borderColor= "white"
         color= 'white'
+        mode= 'outlined'
         />
          <Text style= {{color: 'white'}}>Email</Text>
         <TextInput 
         placeholder = {this.state.allinfo.email}
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
-        style={{padding:5, borderWidth:1, margin:5}}
+        //style={{padding:5, borderWidth:1, margin:5}}
         borderColor= "white"
         color= 'white'
-        
+        mode= 'outlined'
         />
         <Text style= {{color: 'white'}}>Password</Text>  
         <TextInput
         placeholder = "Enter new password..."
         onChangeText={(password) => this.setState({password})}
-        style={{padding:5, borderWidth:1, margin:5}}
+        //style={{padding:5, borderWidth:1, margin:5}}
         secureTextEntry={true}
         borderColor= "white"
         color= 'white'
-        placeholderTextColor= 'white'
+        mode= 'outlined'
+        placeholderTextColor= 'black'
+        
         />
         <View style = {styles.button}>
         <Button
@@ -166,9 +172,6 @@ class EditProfileScreen extends Component {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      flexDirection: 'column', 
-      justifyContent: 'flex-start', 
-      alignItems: 'flex-start',
       backgroundColor: 'rgb(32,32,32)',
     },
 
@@ -176,11 +179,11 @@ const styles = StyleSheet.create({
       flex: 1,
       //width: 150,
       //height: 150,
-      flexWrap: 'wrap',
-      //flexDirection: 'row',
-      alignContent: 'center',
+      //flexWrap: 'wrap',
+      flexDirection: 'column',
+      marginBottom: 20,
+      alignContent: 'flex-start',
       justifyContent: 'flex-start',
-      //gap: 10
         
     },
 

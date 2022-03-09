@@ -1,106 +1,114 @@
 import React, { Component } from 'react';
-import { Text, TextInput, View, Button, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-class EditProfilePicture extends Component {
+class EditProfilePicture extends Component{
   constructor(props){
     super(props);
+
     this.state = {
-      //isLoading: true,
-      allinfo: {},
       hasPermission: null,
-      type: Camera.Constants.Type.back
-
+      type: Camera.Constants.Type.back,
+      data: null
     }
   }
 
-  async componentDidMount() {
+  async componentDidMount(){
     const { status } = await Camera.requestCameraPermissionsAsync();
-    this.setState({hasPermission: status === 'granted'})
-    this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.checkLoggedIn();
-    
-    });
-
-  };
-
-
-
-
-
-  
-  componentWillUnmount() {
-    this.unsubscribe();
+    this.setState({hasPermission: status === 'granted'});
   }
 
+  sendToServer = async (data) => {
+      // Get these from AsyncStorage
+      console.log("hello")
+      const sessionvalue = await AsyncStorage.getItem('@session_token');
+      const UserIDvalue = await AsyncStorage.getItem('@user_id');
+      
 
-  checkLoggedIn = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    if (value == null) {
-        this.props.navigation.navigate('Login');
+      let res = await fetch(data.base64);
+      let blob = await res.blob();
+
+      return fetch("http:/10.0.2.2:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
+          method: "POST",
+          headers: {
+              "Content-Type": "image/png",
+              "X-Authorization": sessionvalue
+          },
+          body: blob
+      })
+      .then((response) => {
+          console.log("Picture added", response);
+      })
+      .catch((err) => {
+          console.log(err);
+      })
+  }
+
+    takePicture = async () => {
+        if(this.camera){
+            const options = {
+                quality: 0.5, 
+                base64: true,
+                onPictureSaved: (data) => this.sendToServer(data)
+            };
+            console.log("pic taken")
+            await this.camera.takePictureAsync(options); 
+        } 
     }
-  };
-  
-  
 
- 
-  
-    render(){
-      if(this.state.hasPermission){
-        return(
-          <View style= {styles.button}>
-            <Camera style= {styles.button}>
-              <View>
-                <TouchableOpacity
-                  //style={styles.button}
-                  onPress={() => {
-                    let type = type === Camera.Constants.Type.back
-                    ? Camera.Constants.Type.front
-                    : Camera.Constants.Type.back;
-  
-                    this.setState({type: type});
-                  }}>
-                  <Text> Flip </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                style={styles.buttonStyle}
+  render(){
+    if(this.state.hasPermission){
+      return(
+        <View style={styles.container}>
+          <Camera 
+            style={styles.camera} 
+            type={this.state.type}
+            ref={ref => this.camera = ref}
+          >
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
                 onPress={() => {
-                  //this.takeAPhoto();
-                }}
-                >
-                <Text> Take Photo </Text>
+                  this.takePicture();
+                }}>
+                <Text style={styles.text}> Take Photo </Text>
               </TouchableOpacity>
-              </View>
-            </Camera>
-          </View>
-        );
-      }else{
-        return(
-          <Text>No access to camera</Text>
-        );
-      }
+            </View>
+          </Camera>
+        </View>
+      );
+    }else{
+      return(
+        <Text>No access to camera</Text>
+      );
     }
   }
-  
-
+}
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-       // flexDirection: 'column', 
-        //justifyContent: 'flex-start', 
-        //alignItems: 'flex-start' 
-    },
-
-    button: {
-      flex: 1,
-      padding:10
-        
-    },
-
+  container: {
+    flex: 1,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    margin: 20,
+  },
+  button: {
+    flex: 0.1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 18,
+    color: 'white',
+  },
 });
 
 export default EditProfilePicture;

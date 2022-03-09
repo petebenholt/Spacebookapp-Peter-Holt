@@ -10,7 +10,10 @@ class HomeScreen extends Component {
     this.state = {
       postData: {},
       postText: '',
-      postedData: {}
+      postedData: {},
+      friendsdata: {},
+      friendsUserIDs: [],
+      allposted: {}
     }
   }
 
@@ -19,6 +22,7 @@ class HomeScreen extends Component {
       this.checkLoggedIn();
     });
     this.getPosted();
+    this.getFriendsList();
   }
 
   componentWillUnmount() {
@@ -72,10 +76,16 @@ class HomeScreen extends Component {
         })
   }
 
-  getPosted = async() => {
+
+
+
+
+
+  getPosted = async(userid) => {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
+
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+userid+'/post', {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -84,16 +94,76 @@ class HomeScreen extends Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
-        console.log(responseJson);
+        //console.log(responseJson);
         this.setState({
           //isLoading: false,
           postedData: responseJson
+          
         })
     })
     .catch((error) => {
         console.log(error);
     });
   }
+
+
+  getFriendsList = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    const value2 = await AsyncStorage.getItem('@user_id');
+    //console.log(value2)
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/friends", {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization':  value
+          },
+      })
+        .then((response) => {
+            if(response.status === 200){
+                return response.json()
+            }else if(response.status === 401){
+              this.props.navigation.navigate("Login");
+            }else{
+                throw 'Something went wrong';
+            }
+        })
+        .then((responseJson) => {
+          this.setState({
+            friendsdata: responseJson
+          })
+          //console.log(this.state.friendsdata);
+          this.getUserIDs();
+        })
+
+        .catch((error) => {
+            console.log(error);
+        })
+  }
+
+  getUserIDs = async () => {
+    let friendsdata = this.state.friendsdata;
+    const value2 = await AsyncStorage.getItem('@user_id');
+    
+    for (let i = 0; i < friendsdata.length; i++) {
+      this.state.friendsUserIDs.push(friendsdata[i].user_id);
+    }
+    console.log(this.state.friendsUserIDs);
+    for (let i = 0; i < this.state.friendsUserIDs.length; i++) {
+      this.getPosted(this.state.friendsUserIDs[i]);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+  
+
 
 
 
@@ -103,8 +173,10 @@ class HomeScreen extends Component {
           <Button
           title = 'Profile'
           color='purple'
-          onPress={() => this.props.navigation.navigate("Profile")}
-
+          onPress={() => 
+            {this.getPosted(); 
+            this.props.navigation.navigate("Profile")
+          }}
           />
           <Button
           title = 'Friends'
@@ -144,6 +216,7 @@ class HomeScreen extends Component {
               <Button
                 title='Like'
                 color='purple'
+                onPress={() => this.likePost(item.post_id)}
               />
               <Button
                 title='Dislike'

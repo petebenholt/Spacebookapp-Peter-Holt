@@ -73,7 +73,8 @@ class LoginScreen extends Component{
                     />
                     <Button
                         title="Login"
-                        color="rgb(32,32,32)"
+                        
+                        color="black"
                         onPress={() => this.login()}
                     />
                     <Button
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   box: {
-    backgroundColor: 'rgb(64,64,64)',
+    backgroundColor: 'purple',
     padding: 20,
 
   }

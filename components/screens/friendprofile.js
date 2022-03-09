@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-class ProfileScreen extends Component {
+class FriendsProfileScreen extends Component {
   constructor(props){
     super(props);
 
@@ -24,7 +24,7 @@ class ProfileScreen extends Component {
     });
 
     this.getProfile();
-    this.getProfilePic();
+    //this.getProfilePic();
     this.getPosted();
   };
 
@@ -43,7 +43,8 @@ class ProfileScreen extends Component {
   getProfile = async() => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + value2, {
+    const otheruserID = await AsyncStorage.getItem('other-user_id');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + otheruserID, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -63,35 +64,36 @@ class ProfileScreen extends Component {
     });
   }
   
-  getProfilePic = async () => {
-    console.log("get profpic");
-    const sessionvalue = await AsyncStorage.getItem('@session_token');
-    const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    fetch("http://10.0.2.2:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
-      method: 'get',
-      headers: {
-        'X-Authorization': sessionvalue
-      }
-    })
-    .then((res) => {
-      return res.blob();
-    })
-    .then((resBlob) => {
-      let data = URL.createObjectURL(resBlob);
-      this.setState({
-        pfp: data,
-        isLoading: false
-      });
-    })
-    .catch((error) => {
-      console.log(error)
-    });
-  }
+  // getProfilePic = async () => {
+  //   console.log("get profpic");
+  //   const sessionvalue = await AsyncStorage.getItem('@session_token');
+  //   const UserIDvalue = await AsyncStorage.getItem('@user_id');
+  //   fetch("http://10.0.2.2:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
+  //     method: 'get',
+  //     headers: {
+  //       'X-Authorization': sessionvalue
+  //     }
+  //   })
+  //   .then((res) => {
+  //     return res.blob();
+  //   })
+  //   .then((resBlob) => {
+  //     let data = URL.createObjectURL(resBlob);
+  //     this.setState({
+  //       pfp: data,
+  //       isLoading: false
+  //     });
+  //   })
+  //   .catch((error) => {
+  //     console.log(error)
+  //   });
+  // }
 
   getPosted = async() => {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
+    const otheruserID = await AsyncStorage.getItem('other-user_id');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+otheruserID+'/post', {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -111,35 +113,6 @@ class ProfileScreen extends Component {
     });
   }
 
-  deletePosted = async(postid) => {
-    const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    const sessionvalue = await AsyncStorage.getItem('@session_token');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post/'+postid, {
-        method: 'delete',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Authorization': sessionvalue
-        }
-    })
-    .then((response) => {
-        //console.log(response);
-        this.getPosted();
-        //console.log("success")
-        // this.setState({
-        //   //isLoading: false,
-        //   //postedData: responseJson
-        // })
-    })
-    .then(() =>{
-      
-      
-    })
-    .catch((error) => {
-        console.log(error);
-    });
-
-
-  }
   render() {
     return (
       <View style= {styles.container}>
@@ -149,17 +122,7 @@ class ProfileScreen extends Component {
         <Text style= {styles.text}>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
         <Text style= {styles.text}>Email: {this.state.info.email}</Text>
         <Text style= {styles.text}>Friends: {this.state.info.friend_count}</Text>
-        <Button
-          title="Edit"
-          color= "purple"
-          onPress={() => this.props.navigation.navigate("Edit Profile")}
-        />
-        <Button
-          title="Logout"
-          color= "purple"
-          onPress={() => this.props.navigation.navigate("Logout")}
-        />
-        <Text style= {styles.text2}>Your Posts</Text>
+        <Text style= {styles.text2}>Their Posts</Text>
         <FlatList
             data={this.state.postedData}
             extraData={this.props}
@@ -174,11 +137,6 @@ class ProfileScreen extends Component {
               <Text>   </Text>
               <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
               <View style= {styles.likesbutton}>
-              <Button
-                title = "Delete Post"
-                color = "red"
-                onPress={() => this.deletePosted(item.post_id)}
-              />
               </View>
             </View>
               )}
@@ -254,4 +212,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default ProfileScreen;
+export default FriendsProfileScreen;

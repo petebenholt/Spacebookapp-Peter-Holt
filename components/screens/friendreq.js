@@ -117,7 +117,7 @@ class FriendsreqScreen extends Component {
         .then((response) => {
             if(response.status === 200){
                 return response.json()
-                this.getFriendsReq();
+                
         console.log('success');
             }else if(response.status === 401){
               console.log("unauthorised")
@@ -129,6 +129,10 @@ class FriendsreqScreen extends Component {
             else{
                 throw 'server error';
             }
+        })
+        .then(() => {
+          this.getFriendsReq();
+
         })
         .catch((error) => {
             console.log(error);
