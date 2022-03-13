@@ -125,7 +125,9 @@ class EditProfileScreen extends Component {
         />
          <Text style= {{color: 'white'}}>Email</Text>
         <TextInput 
+        placeholderTextColor= "white"
         placeholder = {this.state.allinfo.email}
+        
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
         style={{padding:5, borderWidth:1, margin:5}}

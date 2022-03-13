@@ -88,7 +88,7 @@ class HomeScreen extends Component {
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
     let friendsID = this.state.friendidjson;
 
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+friendsID+'/post', {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',

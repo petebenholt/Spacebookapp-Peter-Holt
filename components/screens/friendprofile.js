@@ -188,6 +188,7 @@ class FriendsProfileScreen extends Component {
     await AsyncStorage.setItem('postid', postID.toString());
     await AsyncStorage.setItem('otherfriendid', otherfriendid.toString());
     this.props.navigation.navigate("Friend's Post");
+
       
   }
 

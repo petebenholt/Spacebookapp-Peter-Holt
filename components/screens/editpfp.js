@@ -10,7 +10,7 @@ class EditProfilePicture extends Component{
 
     this.state = {
       hasPermission: null,
-      type: Camera.Constants.Type.back,
+      type: Camera.Constants.Type.front,
       data: null
     }
   }
@@ -22,16 +22,17 @@ class EditProfilePicture extends Component{
 
   sendToServer = async (data) => {
       // Get these from AsyncStorage
-      console.log("hello")
+      console.log("called")
       const sessionvalue = await AsyncStorage.getItem('@session_token');
       const UserIDvalue = await AsyncStorage.getItem('@user_id');
-      console.log("success")
+      console.log("login details received")
 
       let res = await fetch(data.base64);
+      console.log("data fetched")
       let blob = await res.blob();
-      console.log("success2")
+      console.log("data blobbed")
 
-      return fetch("http://192.168.0.17:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
+      return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
           method: "POST",
           headers: {
               "Content-Type": "image/png",

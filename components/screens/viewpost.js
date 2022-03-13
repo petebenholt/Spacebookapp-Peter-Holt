@@ -9,7 +9,7 @@ class ViewPost extends Component {
     super(props);
 
     this.state = {
-      info: {}
+      post: {}
     }
   }
 
@@ -52,7 +52,7 @@ class ViewPost extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          info: responseJson
+          post: responseJson
         })
     })
     .catch((error) => {
@@ -133,16 +133,10 @@ class ViewPost extends Component {
   render() {
     return (
       <View>
-      {/* <Text>{this.state.info.author.first_name}</Text>
-      <Text>{this.state.info.timestamp}</Text>
-      <Text>{this.state.info.text}</Text>
-      <Text>
-        Likes:
-        {' '}
-        {this.state.postedData.numLikes}
-      </Text> */}
-    </View>
-        
+      {/* <Text>{this.state.post.author.first_name}</Text> */}
+      <Text>{this.state.post.timestamp}</Text>
+      <Text>{this.state.post.text}</Text>
+      </View>
       );
     }
 }
