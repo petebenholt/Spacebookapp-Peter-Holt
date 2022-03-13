@@ -237,6 +237,7 @@ class HomeScreen extends Component {
           onPress={() => this.postAPost()}
           />
           </View>
+          <Text>Your Posts</Text>
           <FlatList
             data={this.state.postedData}
             keyExtractor={(item,index) => item.post_id.toString()}
@@ -249,15 +250,6 @@ class HomeScreen extends Component {
               <Text>{item.text}</Text>
               <Text>Likes: {item.numLikes}</Text>
               <View style= {styles.likesbutton}>
-              <Button
-                title='Like'
-                color='purple'
-                onPress={() => this.likePost(item.post_id)}
-              />
-              <Button
-                title='Dislike'
-                color='red'
-              />
               </View>
             </View>
               )}

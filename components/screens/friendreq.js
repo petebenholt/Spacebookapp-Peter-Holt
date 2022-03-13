@@ -64,9 +64,6 @@ class FriendsreqScreen extends Component {
 
   addFriendreq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
-    //const value2 = await AsyncStorage.getItem('@user_id');
-    //gotUserID = userID;
-    //console.log(gotUserID);
     return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
       method: 'post',
       headers: {
@@ -76,7 +73,7 @@ class FriendsreqScreen extends Component {
       })
         .then((response) => {
             if(response.status === 200){
-                return response.json()
+                return console.log("OK")
                 
             }else if(response.status === 401){
               console.log("unauthorised")
@@ -103,10 +100,6 @@ class FriendsreqScreen extends Component {
 
   declineFriendReq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
-    //const value2 = await AsyncStorage.getItem('@user_id');
-    //gotUserID = userID;
-    //console.log(gotUserID);
-    
     return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
       method: 'delete',
       headers: {
@@ -116,9 +109,7 @@ class FriendsreqScreen extends Component {
       })
         .then((response) => {
             if(response.status === 200){
-                return response.json()
-                
-        console.log('success');
+                return console.log("OK")
             }else if(response.status === 401){
               console.log("unauthorised")
             }else if(response.status === 404){
@@ -139,15 +130,6 @@ class FriendsreqScreen extends Component {
           })
   }
   
-  //  remove = (keyExtractor) => {
-  //   //console.log(index);
-  //   let newList = this.state.listdata;
-  //   newList.splice(item);
-  //   this.setState({listdata: newList});
-  //  }
-  //remove = () => {
-    //this.props.navigation.navigate('Friends');
-  //}
 
   render(){
     return(

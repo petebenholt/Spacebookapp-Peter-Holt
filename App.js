@@ -16,6 +16,7 @@ import FriendsSearchScreen from './components/screens/friendsearch';
 import EditProfilePicture from './components/screens/editpfp';
 import FriendsProfileScreen from './components/screens/friendprofile';
 import ViewPost from './components/screens/viewpost';
+import EditPost from './components/screens/updatepost';
 
 const Stack =createNativeStackNavigator();
 function App() {
@@ -168,6 +169,19 @@ function App() {
         <Stack.Screen 
         name ="Friend's Post" 
         component={ViewPost}
+        options={{ 
+          headerStyle: 
+          {backgroundColor: 'black' 
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          }} 
+        />
+        <Stack.Screen 
+        name ="Edit Post" 
+        component={EditPost}
         options={{ 
           headerStyle: 
           {backgroundColor: 'black' 

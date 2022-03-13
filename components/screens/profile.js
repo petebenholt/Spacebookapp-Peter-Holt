@@ -140,9 +140,8 @@ class ProfileScreen extends Component {
   }
 
   editPosted = async(postid) => {
-    const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    const sessionvalue = await AsyncStorage.getItem('@session_token');
-    
+    await AsyncStorage.setItem('postid', postid.toString());
+    this.props.navigation.navigate("Edit Post")
   }
 
 
@@ -184,7 +183,7 @@ class ProfileScreen extends Component {
               <Button
                 title = "Edit Post"
                 color = "blue"
-                onPress={() => this.deletePosted(item.post_id)}
+                onPress={() => this.editPosted(item.post_id)}
               />
               <Button
                 title = "Delete Post"

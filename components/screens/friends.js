@@ -82,6 +82,7 @@ class FriendsScreen extends Component {
     await AsyncStorage.setItem('other-user_id', frienduserid.toString());
     this.props.navigation.navigate("Friends Profile");
   }
+  
  getUserSearch = async () => {
   const value = await AsyncStorage.getItem('@session_token');
   const value2 = await AsyncStorage.getItem('@user_id');
