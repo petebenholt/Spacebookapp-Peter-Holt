@@ -11,10 +11,6 @@ class HomeScreen extends Component {
       postData: {},
       postText: '',
       postedData: {},
-      friendsdata: {},
-      friendsUserIDs: [],
-      allposted: {},
-      friendidjson: {}
     }
   }
 
@@ -23,7 +19,6 @@ class HomeScreen extends Component {
       this.checkLoggedIn();
     });
     this.getPosted();
-    this.getFriendsList();
   }
 
   componentWillUnmount() {
@@ -39,14 +34,14 @@ class HomeScreen extends Component {
   };
 
   postAPost = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const value2 = await AsyncStorage.getItem('@user_id');
+    const sessiontoken = await AsyncStorage.getItem('@session_token');
+    const UserID = await AsyncStorage.getItem('@user_id');
     console.log(this.state.postText);
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/post", {
+    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+UserID+"/post", {
       method: 'post',
       'headers': {
           'Content-Type': 'application/json',
-          'X-Authorization':  value
+          'X-Authorization':  sessiontoken
           },
           body: JSON.stringify({
             text: this.state.postText
@@ -70,6 +65,7 @@ class HomeScreen extends Component {
           this.setState({
             postData: responseJson
           })
+          this.getPosted();
         console.log(this.state.postData)
         })
         .catch((error) => {
@@ -79,14 +75,10 @@ class HomeScreen extends Component {
 
 
 
-
-
-
   getPosted = async() => {
     console.log("getting")
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    let friendsID = this.state.friendidjson;
 
     return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post', {
         method: 'get',
@@ -109,103 +101,19 @@ class HomeScreen extends Component {
     });
   }
 
-
-  getFriendsList = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const value2 = await AsyncStorage.getItem('@user_id');
-    //console.log(value2)
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/friends", {
-      method: 'get',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization':  value
-          },
-      })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-              this.props.navigation.navigate("Login");
-            }else{
-                throw 'Something went wrong';
-            }
-        })
-        .then((responseJson) => {
-          this.setState({
-            friendsdata: responseJson
-          })
-          //console.log(this.state.friendsdata);
-          this.getUserIDs();
-        })
-
-        .catch((error) => {
-            console.log(error);
-        })
-  }
-
-  getUserIDs = async () => {
-    let friendsdata = this.state.friendsdata;
-    const value2 = await AsyncStorage.getItem('@user_id');
+  dateParser = (date)=>{
+    let unixdate = Date.parse(date);
+    let dateString = new Date(unixdate).toLocaleDateString("en-UK")
+    let timeString = new Date(unixdate).toLocaleTimeString("en-UK");
+    let finalDate = dateString+ " " + timeString
+    return finalDate
     
-    for (let i = 0; i < friendsdata.length; i++) {
-      this.state.friendsUserIDs.push(friendsdata[i].user_id);
-    }
-    console.log(this.state.friendsUserIDs);
-    for (let i = 0; i < this.state.friendsUserIDs.length; i++) {
-      //this.getPosted(this.state.friendsUserIDs[i]);
-      this.state.friendidjson = JSON.stringify(this.state.friendsUserIDs);
-    }
-    console.log(this.state.friendidjson);
   }
-
-
-
-
-
-
-
-
-
-
-  likePost = async(postID)=>{
-    const value = await AsyncStorage.getItem('@session_token');
-    let id = await AsyncStorage.getItem("@session_id");
-      
-    return fetch(this.state.postLink+"/user/"+id+"/post/"+postID+"/like",{
-      method:"POST",
-      headers:{
-        'X-Authorization':  value
-      }
-    })
-    .then((response) => {
-      if(response.status === 200){
-      }else if(response.status === 401){
-          throw 'Unauthorized'
-      }else if(response.status === 403){
-        throw 'already liked this post'
-      }else if(response.status === 404){
-        throw 'Not Found'
-      }else if(response.status === 500){
-        throw 'Server Error'
-      }else{
-          throw 'Something went wrong';
-      }
-    })
-    .then((responseJson) => {
-      console.log(responseJson);
-    })
-    .catch((error) => {
-        console.log(error);
-    }) 
-  }
-
-
-
-
 
   render() {
       return (
         <View style= {styles.container}>
+          <View style= {styles.navButtons}>
           <Button
           title = 'Profile'
           color='purple'
@@ -214,12 +122,13 @@ class HomeScreen extends Component {
             this.props.navigation.navigate("Profile")
           }}
           />
+          <View><Text>  </Text></View>
           <Button
           title = 'Friends'
           color='purple'
           onPress={() => this.props.navigation.navigate("Friends")}
-
           />
+          </View>
           <TextInput
             placeholder="Enter Your Post..."
             placeholderTextColor= 'white'
@@ -227,27 +136,31 @@ class HomeScreen extends Component {
             multiline = {true}
             onChangeText={(postText) => this.setState({postText})}
             value={this.state.postText}
-            style={{padding:5, borderWidth:1, margin:5}}
+            style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
             borderColor= "white"
           />
-          <View style= {styles.buttonstyle}>
+          <View style= {styles.postButton}>
           <Button 
           title = 'Add Post'
           color='purple'
           onPress={() => this.postAPost()}
           />
           </View>
-          <Text>Your Posts</Text>
+          <View style = {styles.postTextBox}>
+        
+          <Text style= {styles.postText}>Your Posts</Text>
+          </View>
           <FlatList
             data={this.state.postedData}
             keyExtractor={(item,index) => item.post_id.toString()}
             renderItem={({item}) => (
             <View style= {styles.listbox}>
               <Text style = {{color: 'black'}}>
-              {item.author.first_name} {item.author.last_name} </Text>
-              <Text>Date:{item.timestamp}</Text>
-
+               {item.author.first_name} {item.author.last_name}</Text>
+              <Text>{this.dateParser(item.timestamp)}</Text>
+              <Text></Text>
               <Text>{item.text}</Text>
+              <Text></Text>
               <Text>Likes: {item.numLikes}</Text>
               <View style= {styles.likesbutton}>
               </View>
@@ -270,20 +183,30 @@ class HomeScreen extends Component {
     listbox: {
       padding: 20,
       backgroundColor: 'white',
-      marginBottom: 10
-
-    },
-    buttonstyle: {
       marginBottom: 10,
-    },
-    likesbutton: {
-      justifyContent: 'flex-start',
-      alignItems: 'stretch',
-      flexDirection: 'row',
-      marginRight:10,
-    },
+      borderRadius: 15
 
-
+    },
+    postButton: {
+      marginBottom: 1,
+      flexDirection: "row",
+      justifyContent: "center"
+      
+    },
+    navButtons: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      
+    },
+    postText: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 24,
+      justifyContent: 'center',
+    },
+    postTextBox: {
+      marginLeft: 140,
+     },
   })
 
 export default HomeScreen;

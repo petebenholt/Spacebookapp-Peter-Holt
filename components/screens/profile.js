@@ -41,13 +41,13 @@ class ProfileScreen extends Component {
   };
 
   getProfile = async() => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const value2 = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + value2, {
+    const sessiontoken = await AsyncStorage.getItem('@session_token');
+    const UserID = await AsyncStorage.getItem('@user_id');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + UserID, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
-            'X-Authorization': value
+            'X-Authorization': sessiontoken
         }
     })
     .then((response) => response.json())
@@ -144,6 +144,14 @@ class ProfileScreen extends Component {
     this.props.navigation.navigate("Edit Post")
   }
 
+  dateParser = (date)=>{
+    let unixdate = Date.parse(date);
+    let dateString = new Date(unixdate).toLocaleDateString("en-UK")
+    let timeString = new Date(unixdate).toLocaleTimeString("en-UK");
+    let finalDate = dateString+ " " + timeString
+    return finalDate
+    
+  }
 
 
   render() {
@@ -152,8 +160,8 @@ class ProfileScreen extends Component {
         <Image
           source={{uri: this.state.pfp}}
         />
-        <Text style= {styles.text}>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
-        <Text style= {styles.text}>Email: {this.state.info.email}</Text>
+        <Text style= {styles.text}>{this.state.info.first_name} {this.state.info.last_name}</Text>
+        <Text style= {styles.text}>{this.state.info.email}</Text>
         <Text style= {styles.text}>Friends: {this.state.info.friend_count}</Text>
         <Button
           title="Edit"
@@ -174,7 +182,7 @@ class ProfileScreen extends Component {
             <View style= {styles.listbox}>
               <Text style = {styles.text3}>
               {item.author.first_name} {item.author.last_name} </Text>
-              <Text style = {styles.text3}>Date:{item.timestamp}</Text>
+              <Text style = {styles.text3}>{this.dateParser(item.timestamp)}</Text>
               <Text>   </Text>
               <Text styles= {styles.text3}> {item.text} </Text>
               <Text>   </Text>

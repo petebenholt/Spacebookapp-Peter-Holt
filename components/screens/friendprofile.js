@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+
 class FriendsProfileScreen extends Component {
   constructor(props){
     super(props);
@@ -184,13 +185,22 @@ class FriendsProfileScreen extends Component {
   }
 
 
-  ViewPost = async(postID, otherfriendid)=>{
+  ViewPost = async(postID, otherfriendid,friendfirstname, friendlastname)=>{
     await AsyncStorage.setItem('postid', postID.toString());
     await AsyncStorage.setItem('otherfriendid', otherfriendid.toString());
+    await AsyncStorage.setItem('friendFirstName', friendfirstname.toString());
+    await AsyncStorage.setItem('friendLastName', friendlastname.toString());
     this.props.navigation.navigate("Friend's Post");
-
-      
   }
+
+  dateParser = (date)=>{
+    let unixdate = Date.parse(date);
+    let dateString = new Date(unixdate).toLocaleDateString("en-UK")
+    let timeString = new Date(unixdate).toLocaleTimeString("en-UK");
+    let finalDate = dateString+ " " + timeString
+    return finalDate
+  }
+
 
   render() {
     return (
@@ -198,24 +208,27 @@ class FriendsProfileScreen extends Component {
         <Image
           source={{uri: this.state.pfp}}
         />
-        <Text style= {styles.text}>Name: {this.state.info.first_name} {this.state.info.last_name}</Text>
-        <Text style= {styles.text}>Email: {this.state.info.email}</Text>
-        <Text style= {styles.text}>Friends: {this.state.info.friend_count}</Text>
-        <Text style= {styles.text2}>Their Posts</Text>
+        <View style= {styles.profileBox}>
+        <Text style= {styles.profileText}> {this.state.info.first_name} {this.state.info.last_name}</Text>
+        <Text style= {styles.profileText}> {this.state.info.email}</Text>
+        <Text style= {styles.profileText}> Friends: {this.state.info.friend_count}</Text>
+        </View>
+        <View style = {styles.postTextBox}>
+        <Text style= {styles.userPostsText}>{this.state.info.first_name}'s Posts</Text>
+        </View>
         <FlatList
             data={this.state.postedData}
-            extraData={this.props}
             keyExtractor={(item,index) => item.post_id.toString()}
             renderItem={({item}) => (
             <View style= {styles.listbox}>
-              <Text style = {styles.text3}>
+              <Text style = {styles.postText}>
               {item.author.first_name} {item.author.last_name} </Text>
-              <Text style = {styles.text3}>Date:{item.timestamp}</Text>
+              <Text style = {styles.postText}>{this.dateParser(item.timestamp)}</Text>
               <Text>   </Text>
-              <Text styles= {styles.text3}> {item.text} </Text>
+              <Text styles= {styles.postText}> {item.text} </Text>
               <Text>   </Text>
-              <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
-              <View style= {styles.likesbutton}>
+              <Text style = {styles.postText}>Likes: {item.numLikes}</Text>
+              <View style= {styles.postButtons}>
               <Button
                 title='Like'
                 color='purple'
@@ -228,8 +241,8 @@ class FriendsProfileScreen extends Component {
               />
               <Button
                 title='View Post'
-                color='red'
-                onPress={() => this.ViewPost(item.post_id, item.author.user_id)}
+                color='purple'
+                onPress={() => this.ViewPost(item.post_id, item.author.user_id, item.author.first_name, item.author.last_name)}
               />
               </View>
             </View>
@@ -246,53 +259,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(32,32,32)',
   },
   box: {
-    backgroundColor: 'rgb(255,255,255)',
+    backgroundColor: 'white',
     padding: 10,
   },
-  text: {
+  profileText: {
+    color: 'white',
+    fontSize: 18,
+
+  },
+  profileBox: {
+    backgroundColor: 'rgb(32,32,32)',
+    //borderRadius: 15
+
+  },
+  userPostsText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 20,
-  },
-  text2: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 24,
     justifyContent: 'center',
   },
-  text3: {
+  postText: {
     color: 'black',
     //fontWeight: 'bold',
     //fontSize: 24,
     justifyContent: 'center',
   },
-  feedtext: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 10,
-    
-  },
-  textbox: {
+  postTextBox: {
    marginLeft: 130,
-  },
-  button: {
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    padding:1,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
   },
   listbox: {
     padding: 20,
     backgroundColor: 'white',
-    marginBottom: 10
-
+    marginBottom: 10,
+    borderRadius: 15
   },
   buttonstyle: {
     marginBottom: 10,
   },
-  likesbutton: {
+  postButtons: {
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -300,8 +304,6 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: 'black',
-
-
   },
 
 })

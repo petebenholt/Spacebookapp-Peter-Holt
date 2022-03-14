@@ -1,5 +1,6 @@
+import { alignProperty } from '@mui/material/styles/cssUtils';
 import React, { Component } from 'react';
-import { Button, ScrollView, TextInput } from 'react-native';
+import { Button, TextInput, StyleSheet, View } from 'react-native';
 
 class SignupScreen extends Component{
     constructor(props){
@@ -41,41 +42,76 @@ class SignupScreen extends Component{
         })
     }
 
-    render(){
-        return (
-            <ScrollView>
-                <TextInput
-                    placeholder="Enter your first name..."
-                    onChangeText={(first_name) => this.setState({first_name})}
-                    value={this.state.first_name}
-                    style={{padding:5, borderWidth:1, margin:5}}
-                />
-                <TextInput
-                    placeholder="Enter your last name..."
-                    onChangeText={(last_name) => this.setState({last_name})}
-                    value={this.state.last_name}
-                    style={{padding:5, borderWidth:1, margin:5}}
-                />
-                <TextInput
-                    placeholder="Enter your email..."
-                    onChangeText={(email) => this.setState({email})}
-                    value={this.state.email}
-                    style={{padding:5, borderWidth:1, margin:5}}
-                />
-                <TextInput
-                    placeholder="Enter your password..."
-                    onChangeText={(password) => this.setState({password})}
-                    value={this.state.password}
-                    secureTextEntry
-                    style={{padding:5, borderWidth:1, margin:5}}
-                />
-                <Button
-                    title="Create an account"
-                    onPress={() => this.signup()}
-                />
-            </ScrollView>
-        )
-    }
+  render(){
+      return (
+        <View style = {styles.container}>
+        <TextInput
+            placeholder="Enter your first name..."
+            onChangeText={(first_name) => this.setState({first_name})}
+            value={this.state.first_name}
+            placeholderTextColor= "white"
+            borderColor= "white"
+            style ={styles.TextInput}
+        />
+        <TextInput
+            placeholder="Enter your last name..."
+            onChangeText={(last_name) => this.setState({last_name})}
+            placeholderTextColor= "white"
+            value={this.state.last_name}
+            borderColor= "white"
+            style ={styles.TextInput}
+        />
+        <TextInput
+            style ={styles.TextInput}
+            placeholder="Enter your email..."
+            onChangeText={(email) => this.setState({email})}
+            value={this.state.email}
+            placeholderTextColor= "white"
+            borderColor= "white"
+            
+        />
+        <TextInput
+            placeholder="Enter your password..."
+            onChangeText={(password) => this.setState({password})}
+            value={this.state.password}
+            secureTextEntry = {true}
+            placeholderTextColor= "white"
+            borderColor= "white"
+            style ={styles.TextInput}
+            
+        />
+        <View style= {styles.button}>
+        <Button
+            title="Create account"
+            onPress={() => this.signup()}
+            color= "purple"
+        />
+        </View>
+              
+      </View>
+    )
+  }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'rgb(32,32,32)',
+  },
+  TextInput: {
+    color: 'white',
+    padding:5,
+    borderWidth:1,
+    margin:5,
+    borderRadius: 8
+  },
+  button: {
+    justifyContent: "center",
+    flexDirection: "row"
+
+  }
+
+
+})
 
 export default SignupScreen;

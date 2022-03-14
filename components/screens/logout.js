@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
-import { Text, ScrollView, Button } from 'react-native';
+import { Text, Button, View, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class HomeScreen extends Component{
+
+
+class LogoutScreen extends Component{
     constructor(props){
         super(props);
 
         this.state = {
-            token: ''
+            info: {}
         }
     }
 
-    componentDidMount(){
-        this._unsubscribe = this.props.navigation.addListener('focus', () => {
-            this.checkLoggedIn();
-        });        
-    }
+  componentDidMount(){
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+        this.checkLoggedIn();
+    }); 
+  this.getProfile();
+  }
 
     componentWillUnmount(){
         this._unsubscribe();
@@ -31,7 +34,7 @@ class HomeScreen extends Component{
     }
 
     logout = async () => {
-        let token = await AsyncStorage.getItem('@session_token');
+        const token = await AsyncStorage.getItem('@session_token');
         await AsyncStorage.removeItem('@session_token');
         return fetch("http://10.0.2.2:3333/api/1.0.0/logout", {
             method: 'post',
@@ -53,25 +56,69 @@ class HomeScreen extends Component{
         })
     }
 
+    getProfile = async() => {
+      const sessiontoken = await AsyncStorage.getItem('@session_token');
+      const userid = await AsyncStorage.getItem('@user_id');
+      return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+userid, {
+          method: 'get',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-Authorization': sessiontoken
+          }
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+          console.log(responseJson);
+          this.setState({
+              //isLoading: false,
+              info: responseJson
+          })
+      })
+      .catch((error) => {
+          console.log(error);
+      });
+    }
     render(){
         return (
-            <ScrollView>
-                <Text style={{fontSize:18, fontWeight:'bold', padding:5, margin:5}}></Text>
-                <Text style={{fontSize:18, fontWeight:'bold', padding:5, margin:5}}></Text>
+            <View style= {styles.container}>
+                <Text style = {styles.goodbyeText}>Goodbye, {this.state.info.first_name}!</Text>
+                <View style ={styles.buttons}>
                 <Button
                     title="Logout"
+                    color= "purple"
                     onPress={() => this.logout()}
                 />
                 <Button
                     title="Cancel"
-                    color="darkblue"
+                    color="black"
                     onPress={() => this.props.navigation.navigate("Home")}
                 />
-            </ScrollView>
+                </View>
+            </View>
         )
     }
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    backgroundColor: 'rgb(32,32,32)',
+    justifyContent:'center',
+    
+  },
+  goodbyeText: {
+    color: 'white',
+    fontSize: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  buttons: {
+    justifyContent: 'center',
+    marginBottom: 150
+  }
+ 
+})
 
 
-export default HomeScreen;
+
+export default LogoutScreen;

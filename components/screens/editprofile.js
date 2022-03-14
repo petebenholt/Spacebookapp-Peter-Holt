@@ -107,7 +107,7 @@ class EditProfileScreen extends Component {
         placeholder = {this.state.allinfo.first_name}
         onChangeText={(first_name) => this.setState({first_name})}
         defaultValue = {this.state.allinfo.first_name}
-        style={{padding:5, borderWidth:1, margin:5}}
+        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
         borderColor= "white"
         color= 'white'
         
@@ -118,7 +118,7 @@ class EditProfileScreen extends Component {
         placeholder = {this.state.allinfo.last_name}
         onChangeText={(last_name) => this.setState({last_name})}
         defaultValue = {this.state.allinfo.last_name}
-        style={{padding:5, borderWidth:1, margin:5}}
+        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
         borderColor= "white"
         color= 'white'
         
@@ -130,7 +130,7 @@ class EditProfileScreen extends Component {
         
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
-        style={{padding:5, borderWidth:1, margin:5}}
+        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
         borderColor= "white"
         color= 'white'
 
@@ -139,16 +139,16 @@ class EditProfileScreen extends Component {
         <TextInput
         placeholder = "Enter new password..."
         onChangeText={(password) => this.setState({password})}
-        style={{padding:5, borderWidth:1, margin:5}}
+        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
         secureTextEntry={true}
         borderColor= "white"
         color= 'white'
-        placeholderTextColor= 'black'
+        placeholderTextColor= 'white'
         
         />
         <View style = {styles.button}>
         <Button
-        title="Update"
+        title="           Update           "
         color="purple"
         onPress={() => {
             this.profileUpdate()
@@ -156,6 +156,7 @@ class EditProfileScreen extends Component {
         }
         }
         />
+        <Text>  </Text>
         <Button
         title="Edit Profile Picture"
         color="purple"
@@ -177,14 +178,9 @@ const styles = StyleSheet.create({
     },
 
     button: {
-      flex: 1,
-      //width: 150,
-      //height: 150,
-      //flexWrap: 'wrap',
-      flexDirection: 'column',
-      marginBottom: 20,
-      alignContent: 'flex-start',
-      justifyContent: 'flex-start',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 10
         
     },
 

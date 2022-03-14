@@ -122,8 +122,8 @@ getUserSearchQuery = async (name) => {
   const value = await AsyncStorage.getItem('@session_token');
   const value2 = await AsyncStorage.getItem('@user_id');
 
-  console.log(value2)
-  if(this.state.name == ""){
+  console.log(value2) 
+  if(this.state.name == ""){ //clears the list if nothing in state
     this.state.matchedusers == []
   }
   else{
@@ -242,26 +242,25 @@ splitnames = () => {
     
   }
 
-  friendReset = async ()=>{
+  friendReset = async ()=>{ //function that clear
     if(this.state.name == ""){
       this.state.matchedusers = [];
-
     }
   }
 
-
+ 
   
   
   render() {
       return (
           <View style= {Styles.container}>
-            <View style = {Styles.button}>
+            <View>
               <TextInput
                 placeholder="Add Friend Name..."
                 placeholderTextColor= 'white'
                 color= 'white'
-                style={{padding:5, borderWidth:1, margin:5}}
-                borderColor= "black"
+                style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
+                borderColor= "white"
                 onChangeText={(name) => this.setState({name})}
                 value={this.state.name}
               />
@@ -270,7 +269,7 @@ splitnames = () => {
                 keyExtractor={(item,index) => item.user_id.toString()}
                 renderItem={({item}) => (
                   <View style= {Styles.box}>
-                    <Text style = {Styles.text}>
+                    <Text style = {Styles.friendboxtext}>
                       {item.user_givenname} {item.user_familyname}
                     </Text>
                     <Button 
@@ -282,15 +281,15 @@ splitnames = () => {
                     )}
                 
               />
-
+              <View style= {Styles.friendButtons}>
               <Button
-                title="Add Friend"
+                title="    Add Friend    "
                 color='purple'
                 onPress={() => this.getUserSearch()}
                 
               />
               <Button
-                title="Search Friend"
+                title=" Search Friend "
                 color='purple'
                 onPress={() => this.getUserSearchQuery(this.state.name)}
                 
@@ -300,23 +299,26 @@ splitnames = () => {
                 color="purple"
                 onPress={() => this.props.navigation.navigate("Friend Requests")}
               />
+              </View>
               
             </View>
-              <View style = {Styles.textbox}>
-              <Text style= {Styles.text2}>Friends List</Text>
+              <View style = {Styles.friendListTextBox}>
+              <Text style= {Styles.friendlistText}>Friends List</Text>
               </View>
               <FlatList
                 data={this.state.listdata}
                 renderItem={({item}) => (
                   <View style= {Styles.box}>
-                    <Text style = {Styles.text}>
+                    <Text style = {Styles.friendboxtext}>
                       {item.user_givenname} {item.user_familyname}
                     </Text>
+                    <View style= {Styles.viewProfileButtons}> 
                     <Button 
                       title="View Profile"
                       color="purple"
                       onPress={() => this.FriendsProfile(item.user_id)}
                     />
+                    </View>
                     
                   </View>
                     )}
@@ -333,32 +335,36 @@ const Styles = StyleSheet.create({
     backgroundColor: 'rgb(32,32,32)',
   },
   box: {
-    backgroundColor: 'purple',
+    backgroundColor: 'white',
     padding: 10,
-    marginBottom: 2
+    marginBottom: 8,
+    borderRadius: 15
+
   },
-  text: {
-    color: 'white',
+  friendboxtext: {
+    color: 'black',
     //fontWeight: 'bold',
     fontSize: 15,
   },
-  text2: {
+  friendlistText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 24,
     justifyContent: 'center',
   },
-  textbox: {
+  friendListTextBox: {
    marginLeft: 130,
   },
-  button: {
-    flexDirection: 'column',
+  friendButtons: {
+    marginBottom: 1,
+    flexDirection: "row",
     justifyContent: 'space-evenly',
-    padding:1,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
-  }
+  },
+  viewProfileButtons: {
+    marginBottom: 1,
+    flexDirection: "row",
+    justifyContent: 'flex-end',
+  },
 
 })
 

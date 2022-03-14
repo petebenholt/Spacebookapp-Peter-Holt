@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, Button,useState} from 'react-native';
+import {View, Text, FlatList, Button, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 class FriendsreqScreen extends Component {
@@ -133,39 +134,63 @@ class FriendsreqScreen extends Component {
 
   render(){
     return(
-      <View>
+      <View style= {styles.container}>
         <FlatList
           data={this.state.listdata}
           extraData={this.state}
           keyExtractor={(item, index) => item.user_id.toString()}
           renderItem={({item}) => (
-            <View>
-              <Text>
-                {item.first_name} {item.last_name}
-                
-              </Text>
+            <View style = {styles.box}>
+              <Text></Text>
+              <Text style= {styles.nameText}>  {item.first_name} {item.last_name}</Text>
+              <View style = {styles.buttons} >
               <Button
-                title="Add Friend"
-                color="rgb(32,32,32)"
+                title="  Add Friend  "
+                color="purple"
                 onPress={() => this.addFriendreq(item.user_id)}
                 //onPress={() => this.state.refresh = !this.state.refresh }
               />
               <Button
-                title="Decline Friend Request"
-                color="rgb(32,32,32)"
+                title="Decline Request"
+                color="red"
                 onPress={() => this.declineFriendReq(item.user_id) }
-                //onPress={() => this.state.refresh = !this.state.refresh }
-               
               />
-
+              </View>
             </View>
               )}
-        />
+          />
         
       </View>
 
     );
   }
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    backgroundColor: 'rgb(32,32,32)',
+    justifyContent:'center',
+    
+  },
+  nameText: {
+    color: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 20,
+    
+  },
+  buttons: {
+    justifyContent: 'flex-end',
+    marginRight: 100,
+    marginLeft: 100,
+    marginBottom: 10
+    
+  },
+  box: {
+    backgroundColor: 'white',
+    borderRadius: 15
+    
+  },
+ 
+})
 export default FriendsreqScreen;

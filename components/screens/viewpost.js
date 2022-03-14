@@ -9,7 +9,9 @@ class ViewPost extends Component {
     super(props);
 
     this.state = {
-      post: {}
+      post: {},
+      firstname: "",
+      lastname: ""
     }
   }
 
@@ -17,7 +19,7 @@ class ViewPost extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
+    this.getName();
     this.getPosted();
   };
 
@@ -129,13 +131,34 @@ class ViewPost extends Component {
         console.log(error);
     }) 
   }
+  
+  dateParser = (date)=>{
+    let unixdate = Date.parse(date);
+    let dateString = new Date(unixdate).toLocaleDateString("en-UK")
+    let timeString = new Date(unixdate).toLocaleTimeString("en-UK");
+    let finalDate = " "+dateString+ " " + timeString
+    return finalDate
+    
+  }
+  getName = async ()=>{
+    const firstname = await AsyncStorage.getItem('friendFirstName');
+    const lastname = await AsyncStorage.getItem('friendLastName');
+    this.setState({
+      firstname: firstname,
+      lastname: lastname
+    })
+  }
 
   render() {
     return (
-      <View>
+      <View style = {styles.container}>
       {/* <Text>{this.state.post.author.first_name}</Text> */}
-      <Text>{this.state.post.timestamp}</Text>
-      <Text>{this.state.post.text}</Text>
+      <View style = {styles.box}>
+      <Text style = {styles.text}> {this.state.firstname} {this.state.lastname}</Text>
+      <Text style = {styles.text}>{this.dateParser(this.state.post.timestamp)}</Text>
+      <Text></Text>
+      <Text style = {styles.text}> {this.state.post.text}</Text>
+      </View>
       </View>
       );
     }
@@ -147,64 +170,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(32,32,32)',
   },
   box: {
-    backgroundColor: 'rgb(255,255,255)',
-    padding: 10,
+    backgroundColor: 'white',
+    marginTop: 150,
+    padding: 50,
+    borderRadius: 15
   },
   text: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
+    color: "black",
   },
-  text2: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 24,
-    justifyContent: 'center',
-  },
-  text3: {
-    color: 'black',
-    //fontWeight: 'bold',
-    //fontSize: 24,
-    justifyContent: 'center',
-  },
-  feedtext: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 10,
-    
-  },
-  textbox: {
-   marginLeft: 130,
-  },
-  button: {
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    padding:1,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
-  },
-  listbox: {
-    padding: 20,
-    backgroundColor: 'white',
-    marginBottom: 10
-
-  },
-  buttonstyle: {
-    marginBottom: 10,
-  },
-  likesbutton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginRight:10,
-  },
-  image: {
-    backgroundColor: 'black',
-
-
-  },
-
+ 
 })
 
 export default ViewPost;
