@@ -42,8 +42,8 @@ class EditPost extends Component {
     const postid = await AsyncStorage.getItem('postid');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
     console.log("hello")
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+UserIDvalue+'/post/'+postid, {
-        method: 'get',
+    return fetch('http://localhost:3333/api/1.0.0/user/'+UserIDvalue+'/post/'+postid, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Authorization': sessionvalue
@@ -61,12 +61,12 @@ class EditPost extends Component {
     });
   }
 
-  updatePost = async (post_id, post) => {
+  updatePost = async () => {
     const UserID = await AsyncStorage.getItem('@user_id');
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const postid = await AsyncStorage.getItem('postid');
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+UserID+"/post/"+postid, {
-          method: 'patch',
+    return fetch("http://localhost:3333/api/1.0.0/user/"+UserID+"/post/"+postid, {
+          method: 'PATCH',
           headers: {
           'X-Authorization':  sessionvalue,
           'Content-Type': 'application/json',

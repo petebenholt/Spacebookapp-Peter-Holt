@@ -9,9 +9,8 @@ class EditProfilePicture extends Component{
     super(props);
 
     this.state = {
-      hasPermission: null,
-      type: Camera.Constants.Type.front,
-      data: null
+      //hasPermission: null,
+      type: Camera.Constants.Type.back,
     }
   }
 
@@ -32,7 +31,7 @@ class EditProfilePicture extends Component{
       let blob = await res.blob();
       console.log("data blobbed")
 
-      return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
+      return fetch("http://localhost:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
           method: "POST",
           headers: {
               "Content-Type": "image/png",

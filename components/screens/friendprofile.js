@@ -45,8 +45,8 @@ class FriendsProfileScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     const otheruserID = await AsyncStorage.getItem('other-user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + otheruserID, {
-        method: 'get',
+    return fetch('http://localhost:3333/api/1.0.0/user/' + otheruserID, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Authorization': value
@@ -69,7 +69,7 @@ class FriendsProfileScreen extends Component {
   //   console.log("get profpic");
   //   const sessionvalue = await AsyncStorage.getItem('@session_token');
   //   const UserIDvalue = await AsyncStorage.getItem('@user_id');
-  //   fetch("http://10.0.2.2:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
+  //   fetch("http://localhost:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
   //     method: 'get',
   //     headers: {
   //       'X-Authorization': sessionvalue
@@ -94,8 +94,8 @@ class FriendsProfileScreen extends Component {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
     const otheruserID = await AsyncStorage.getItem('other-user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+otheruserID+'/post', {
-        method: 'get',
+    return fetch('http://localhost:3333/api/1.0.0/user/'+otheruserID+'/post', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Authorization': sessionvalue
@@ -120,8 +120,8 @@ class FriendsProfileScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const UserID = await AsyncStorage.getItem('@user_id');
       
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
-      method:"post",
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
+      method:"POST",
       headers:{
         'X-Authorization':  value
       }
@@ -154,8 +154,8 @@ class FriendsProfileScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const UserID = await AsyncStorage.getItem('@user_id');
       
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
-      method:"delete",
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
+      method:"DELETE",
       headers:{
         'X-Authorization':  value
       }

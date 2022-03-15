@@ -12,7 +12,6 @@ import FriendsScreen from './components/screens/friends';
 import FriendsreqScreen from './components/screens/friendreq';
 import ProfileScreen from './components/screens/profile';
 import EditProfileScreen from './components/screens/editprofile';
-import FriendsSearchScreen from './components/screens/friendsearch';
 import EditProfilePicture from './components/screens/editpfp';
 import FriendsProfileScreen from './components/screens/friendprofile';
 import ViewPost from './components/screens/viewpost';
@@ -22,7 +21,7 @@ const Stack =createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName= 'Logout'>
+      <Stack.Navigator initialRouteName= 'Home'>
         <Stack.Screen 
         name ="Login" 
         component={LoginScreen} 
@@ -117,19 +116,6 @@ function App() {
         <Stack.Screen 
         name ="Edit Profile" 
         component={EditProfileScreen}
-        options={{ 
-          headerStyle: 
-          {backgroundColor: 'black' 
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          }} 
-        />
-        <Stack.Screen 
-        name ="Search" 
-        component={FriendsSearchScreen}
         options={{ 
           headerStyle: 
           {backgroundColor: 'black' 

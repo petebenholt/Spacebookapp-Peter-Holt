@@ -43,8 +43,8 @@ class ViewPost extends Component {
     const postid = await AsyncStorage.getItem('postid');
     const otherfriendid = await AsyncStorage.getItem('otherfriendid');
     console.log("hello")
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+otherfriendid+'/post/'+postid, {
-        method: 'get',
+    return fetch('http://localhost:3333/api/1.0.0/user/'+otherfriendid+'/post/'+postid, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Authorization': sessionvalue
@@ -68,8 +68,8 @@ class ViewPost extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const UserID = await AsyncStorage.getItem('@user_id');
       
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
-      method:"post",
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
+      method:"POST",
       headers:{
         'X-Authorization':  value
       }
@@ -102,8 +102,8 @@ class ViewPost extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const UserID = await AsyncStorage.getItem('@user_id');
       
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
-      method:"delete",
+    return fetch("http://localhost:3333/api/1.0.0/user/"+ otherfriendid +"/post/"+ postID +"/like",{
+      method:"DELETE",
       headers:{
         'X-Authorization':  value
       }

@@ -51,7 +51,7 @@ class FriendsScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     //console.log(value2)
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+value2+"/friends", {
+    return fetch("http://localhost:3333/api/1.0.0/user/"+value2+"/friends", {
       method: 'get',
       headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ class FriendsScreen extends Component {
   const value = await AsyncStorage.getItem('@session_token');
   const value2 = await AsyncStorage.getItem('@user_id');
   console.log(value2)
-  return fetch("http://10.0.2.2:3333/api/1.0.0/search", {
+  return fetch("http://localhost:3333/api/1.0.0/search", {
     method: 'get',
     headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ getUserSearchQuery = async (name) => {
     this.state.matchedusers == []
   }
   else{
-  return fetch("http://10.0.2.2:3333/api/1.0.0/search?q=" + name, {
+  return fetch("http://localhost:3333/api/1.0.0/search?q=" + name, {
     method: 'get',
     headers: {
         'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ splitnames = () => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     let gotUserID = this.state.gotuserID;
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+gotUserID+"/friends", {
+    return fetch("http://localhost:3333/api/1.0.0/user/"+gotUserID+"/friends", {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',
@@ -215,8 +215,8 @@ splitnames = () => {
     const value = await AsyncStorage.getItem('@session_token');
     //const value2 = await AsyncStorage.getItem('@user_id');
     let gotUserID = this.state.gotuserID;
-    return fetch("http://10.0.2.2:3333/api/1.0.0/user/"+userid+"/friends", {
-      method: 'post',
+    return fetch("http://localhost:3333/api/1.0.0/user/"+userid+"/friends", {
+      method: 'POST',
       headers: {
           'Content-Type': 'application/json',
           'X-Authorization':  value

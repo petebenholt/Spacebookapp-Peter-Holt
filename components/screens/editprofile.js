@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Alert, ScrollView, Button, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Camera } from 'expo-camera';
+
+
 
 
 
@@ -16,8 +17,6 @@ class EditProfileScreen extends Component {
       last_name: "",
       email: "",
       password: "",
-      hasPermission: null,
-      type: Camera.Constants.Type.back
 
     }
   }
@@ -45,8 +44,8 @@ class EditProfileScreen extends Component {
   getProfile = async() => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + value2, {
-        method: 'get',
+    return fetch('http://localhost:3333/api/1.0.0/user/' + value2, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Authorization': value
@@ -71,13 +70,14 @@ class EditProfileScreen extends Component {
   profileUpdate = async () => {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
     const UserIDvalue = await AsyncStorage.getItem('@user_id');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + UserIDvalue, {
-      method: 'patch',
+    return fetch('http://localhost:3333/api/1.0.0/user/' + UserIDvalue, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'X-Authorization': sessionvalue
       },
       body: JSON.stringify({
+        
         email: this.state.email,
         password: this.state.password,
         first_name: this.state.first_name,
@@ -102,51 +102,41 @@ class EditProfileScreen extends Component {
   render(){
     return (
       <View style={styles.container}>
-        <Text style= {{color: 'white'}}>First Name</Text>
-        <TextInput 
+        <Text style= {styles.textDetails}>First Name</Text>
+        <TextInput
+        style = {styles.textInput}
         placeholder = {this.state.allinfo.first_name}
         onChangeText={(first_name) => this.setState({first_name})}
         defaultValue = {this.state.allinfo.first_name}
-        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
-        borderColor= "white"
-        color= 'white'
-        
-        
         />
-         <Text style= {{color: 'white'}}>Last Name</Text>
+         <Text style= {styles.textDetails}>Last Name</Text>
         <TextInput 
+        style = {styles.textInput}
         placeholder = {this.state.allinfo.last_name}
         onChangeText={(last_name) => this.setState({last_name})}
         defaultValue = {this.state.allinfo.last_name}
-        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
-        borderColor= "white"
-        color= 'white'
+        //style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
+        //borderColor= "white"
+        //color= 'white'
         
         />
-         <Text style= {{color: 'white'}}>Email</Text>
-        <TextInput 
-        placeholderTextColor= "white"
+         <Text style= {styles.textDetails}>Email</Text>
+        <TextInput style = {styles.textInput}
+        //placeholderTextColor= "white"
         placeholder = {this.state.allinfo.email}
-        
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
-        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
-        borderColor= "white"
-        color= 'white'
-
         />
-        <Text style= {{color: 'white'}}>Password</Text>  
+        <Text style= {styles.textDetails}>Password</Text>  
         <TextInput
+        style = {styles.textInput}
         placeholder = "Enter new password..."
         onChangeText={(password) => this.setState({password})}
-        style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
         secureTextEntry={true}
-        borderColor= "white"
-        color= 'white'
-        placeholderTextColor= 'white'
+       
         
         />
-        <View style = {styles.button}>
+        <View style = {styles.updateButtons}>
         <Button
         title="           Update           "
         color="purple"
@@ -177,11 +167,24 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgb(32,32,32)',
     },
 
-    button: {
+    updateButtons: {
       flexDirection: 'row',
       justifyContent: 'center',
       marginTop: 10
         
+    },
+    textDetails:{
+      color: 'white'
+
+    },
+    textInput:{
+      padding:5,
+      borderWidth:1,
+      margin:5,
+      borderRadius: 8,
+      borderColor: 'white',
+      color: 'white',
+      placeholderTextColor: 'white'
     },
 
 });

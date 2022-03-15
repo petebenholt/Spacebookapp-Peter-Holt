@@ -36,8 +36,8 @@ class LogoutScreen extends Component{
     logout = async () => {
         const token = await AsyncStorage.getItem('@session_token');
         await AsyncStorage.removeItem('@session_token');
-        return fetch("http://10.0.2.2:3333/api/1.0.0/logout", {
-            method: 'post',
+        return fetch("http://localhost:3333/api/1.0.0/logout", {
+            method: 'POST',
             headers: {
                 "X-Authorization": token
             }
@@ -59,8 +59,8 @@ class LogoutScreen extends Component{
     getProfile = async() => {
       const sessiontoken = await AsyncStorage.getItem('@session_token');
       const userid = await AsyncStorage.getItem('@user_id');
-      return fetch('http://10.0.2.2:3333/api/1.0.0/user/'+userid, {
-          method: 'get',
+      return fetch('http://localhost:3333/api/1.0.0/user/'+userid, {
+          method: 'GET',
           headers: {
               'Content-Type': 'application/json',
               'X-Authorization': sessiontoken

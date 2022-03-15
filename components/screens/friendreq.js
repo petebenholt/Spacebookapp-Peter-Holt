@@ -37,7 +37,7 @@ class FriendsreqScreen extends Component {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
     console.log(value2)
-    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests", {
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests", {
       method: 'get',
       headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ class FriendsreqScreen extends Component {
 
   addFriendreq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests/"+UserID, {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',
@@ -101,8 +101,8 @@ class FriendsreqScreen extends Component {
 
   declineFriendReq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
-    return fetch("http://10.0.2.2:3333/api/1.0.0/friendrequests/"+UserID, {
-      method: 'delete',
+    return fetch("http://localhost:3333/api/1.0.0/friendrequests/"+UserID, {
+      method: 'DELETE',
       headers: {
           'Content-Type': 'application/json',
           'X-Authorization':  value
