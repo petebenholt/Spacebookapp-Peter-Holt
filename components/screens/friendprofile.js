@@ -262,7 +262,7 @@ class FriendsProfileScreen extends Component {
               />
               <Text> </Text>
               <Button
-                title='View Post'
+                title=' View Post '
                 color='purple'
                 onPress={() => this.ViewPost(item.post_id, item.author.user_id, item.author.first_name, item.author.last_name)}
               />

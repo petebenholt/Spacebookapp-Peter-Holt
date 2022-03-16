@@ -157,7 +157,7 @@ class FriendsreqScreen extends Component {
           
         <Text style= {{
           color:'white', fontSize: 20, marginBottom: 100}}
-          >No Friends Requests!</Text>
+          >No Friend Requests!</Text>
         </View>
       )
     }else{

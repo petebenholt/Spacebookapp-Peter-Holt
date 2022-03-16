@@ -271,9 +271,7 @@ splitnames = () => {
               <TextInput
                 placeholder="Add Friend Name..."
                 placeholderTextColor= 'white'
-                color= 'white'
-                style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
-                borderColor= "white"
+                style={styles.textInput}
                 onChangeText={(name) => this.setState({name})}
                 value={this.state.name}
               />
@@ -355,6 +353,16 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginRight: 5,
     marginLeft: 5,
+  },
+  textInput:{
+    padding:5,
+    borderWidth:1,
+    margin:5,
+    borderRadius: 8,
+    borderColor: 'white',
+    color: 'white',
+    placeholderTextColor: 'white',
+    numberOfLines: "2"
   },
   friendboxtext: {
     color: 'black',

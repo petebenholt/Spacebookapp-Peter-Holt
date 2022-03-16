@@ -214,7 +214,6 @@ class HomeScreen extends Component {
             onChangeText={(postText) => this.setState({postText})}
             value={this.state.postText}
             numberOfLines = "5"
-            
           />
           <View style= {styles.postButton}>
           <Button 

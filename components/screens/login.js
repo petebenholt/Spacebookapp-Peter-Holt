@@ -28,6 +28,8 @@ class LoginScreen extends Component{
                 return response.json()
             }else if(response.status === 400){
                 throw 'Invalid email or password';
+            }else if (response.status === 500) {
+              throw 'Server error';
             }else{
                 throw 'Something went wrong';
             }

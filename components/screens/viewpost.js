@@ -172,7 +172,7 @@ class ViewPost extends Component {
       <View style = {styles.box}>
       <Text style = {styles.text}> {this.state.firstname} {this.state.lastname}</Text>
       <Text style = {styles.text}>{this.dateParser(this.state.post.timestamp)}</Text>
-      <Text></Text>
+      <Text> </Text>
       <Text style = {styles.text}> {this.state.post.text}</Text>
       </View>
       </View>
@@ -190,7 +190,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 150,
     padding: 50,
-    borderRadius: 15
+    borderRadius: 15,
+    marginRight: 5,
+    marginLeft: 5,
   },
   text: {
     color: "black",
