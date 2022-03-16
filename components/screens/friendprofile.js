@@ -14,7 +14,8 @@ class FriendsProfileScreen extends Component {
       newlist: [],
       info: {},
       pfp: null,
-      postedData: []
+      postedData: [],
+      isLoading: true
 
     }
   }
@@ -23,9 +24,8 @@ class FriendsProfileScreen extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.checkLoggedIn();
     });
-
     this.getProfile();
-    //this.getProfilePic();
+    this.getProfilePic();
     this.getPosted();
   };
 
@@ -56,7 +56,7 @@ class FriendsProfileScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-            //isLoading: false,
+            isLoading: false,
             info: responseJson
         })
     })
@@ -65,30 +65,31 @@ class FriendsProfileScreen extends Component {
     });
   }
   
-  // getProfilePic = async () => {
-  //   console.log("get profpic");
-  //   const sessionvalue = await AsyncStorage.getItem('@session_token');
-  //   const UserIDvalue = await AsyncStorage.getItem('@user_id');
-  //   fetch("http://localhost:3333/api/1.0.0/user/" + UserIDvalue +"/photo", {
-  //     method: 'get',
-  //     headers: {
-  //       'X-Authorization': sessionvalue
-  //     }
-  //   })
-  //   .then((res) => {
-  //     return res.blob();
-  //   })
-  //   .then((resBlob) => {
-  //     let data = URL.createObjectURL(resBlob);
-  //     this.setState({
-  //       pfp: data,
-  //       isLoading: false
-  //     });
-  //   })
-  //   .catch((error) => {
-  //     console.log(error)
-  //   });
-  // }
+  getProfilePic = async () => {
+    console.log("get profpic");
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    const otheruserID = await AsyncStorage.getItem('other-user_id');
+    fetch("http://localhost:3333/api/1.0.0/user/" + otheruserID +"/photo", {
+      method: 'get',
+      headers: {
+        'X-Authorization': sessionvalue
+      }
+    })
+    .then((res) => {
+      return res.blob();
+    })
+    .then((resBlob) => {
+      let data = URL.createObjectURL(resBlob);
+      this.setState({
+        pfp: data,
+        isLoading: false
+      });
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+  }
 
   getPosted = async() => {
     const sessionvalue = await AsyncStorage.getItem('@session_token');
@@ -105,10 +106,11 @@ class FriendsProfileScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          //isLoading: false,
+          isLoading: false,
           postedData: responseJson
         })
     })
+    
     .catch((error) => {
         console.log(error);
     });
@@ -203,19 +205,36 @@ class FriendsProfileScreen extends Component {
 
 
   render() {
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+        <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
     return (
       <View style= {styles.container}>
-        <Image
+        <View style= {styles.imagecontainer}>
+        <Image style = {styles.image}
           source={{uri: this.state.pfp}}
-        />
+          />
         <View style= {styles.profileBox}>
         <Text style= {styles.profileText}> {this.state.info.first_name} {this.state.info.last_name}</Text>
         <Text style= {styles.profileText}> {this.state.info.email}</Text>
         <Text style= {styles.profileText}> Friends: {this.state.info.friend_count}</Text>
         </View>
+        </View>
         <View style = {styles.postTextBox}>
         <Text style= {styles.userPostsText}>{this.state.info.first_name}'s Posts</Text>
         </View>
+        <View style = {styles.postsection}>
         <FlatList
             data={this.state.postedData}
             keyExtractor={(item,index) => item.post_id.toString()}
@@ -228,17 +247,20 @@ class FriendsProfileScreen extends Component {
               <Text styles= {styles.postText}> {item.text} </Text>
               <Text>   </Text>
               <Text style = {styles.postText}>Likes: {item.numLikes}</Text>
+              <Text> </Text>
               <View style= {styles.postButtons}>
               <Button
-                title='Like'
+                title='      Like      '
                 color='purple'
                 onPress={() => this.likePost(item.post_id, item.author.user_id)}
               />
+              <Text> </Text>
               <Button
-                title='Dislike'
+                title='   Dislike   '
                 color='red'
                 onPress={() => this.unlikePost(item.post_id, item.author.user_id)}
               />
+              <Text> </Text>
               <Button
                 title='View Post'
                 color='purple'
@@ -248,9 +270,11 @@ class FriendsProfileScreen extends Component {
             </View>
               )}
             />
+            </View>
       </View>
       );
     }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -265,6 +289,7 @@ const styles = StyleSheet.create({
   profileText: {
     color: 'white',
     fontSize: 18,
+    justifyContent: 'flex-start'
 
   },
   profileBox: {
@@ -291,7 +316,9 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
     marginBottom: 10,
-    borderRadius: 15
+    borderRadius: 15,
+    marginRight: 5,
+    marginLeft: 5,
   },
   buttonstyle: {
     marginBottom: 10,
@@ -303,9 +330,28 @@ const styles = StyleSheet.create({
     marginRight:10,
   },
   image: {
-    backgroundColor: 'black',
+    backgroundColor: 'purple',
+    borderWidth: 1,
+    maxWidth:'25%',
+    minWidth:'25%',
+    minHeight:'100%'
   },
-
+  imagecontainer: {
+    backgroundColor: ('rgb(32,32,32)'),
+    flexDirection:'row',
+    flex:1,
+    justifyContent:'flex-start',
+    alignItems:'center',
+    padding:5,
+    minHeight:'13%',
+    
+  },
+  postsection:{
+    flex: 8
+  },
+  loadingText:{
+    color: 'white'
+  },
 })
 
 export default FriendsProfileScreen;

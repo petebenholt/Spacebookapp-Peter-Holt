@@ -9,7 +9,8 @@ class LogoutScreen extends Component{
         super(props);
 
         this.state = {
-            info: {}
+            info: {},
+            isLoading: true
         }
     }
 
@@ -70,7 +71,7 @@ class LogoutScreen extends Component{
       .then((responseJson) => {
           console.log(responseJson);
           this.setState({
-              //isLoading: false,
+              isLoading: false,
               info: responseJson
           })
       })
@@ -79,6 +80,20 @@ class LogoutScreen extends Component{
       });
     }
     render(){
+      if (this.state.isLoading){
+        return (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'rgb(32,32,32)',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+          <Text style = {styles.loadingText}>Loading..</Text>
+          </View>
+        );
+      }else{
         return (
             <View style= {styles.container}>
                 <Text style = {styles.goodbyeText}>Goodbye, {this.state.info.first_name}!</Text>
@@ -96,6 +111,7 @@ class LogoutScreen extends Component{
                 </View>
             </View>
         )
+    }
     }
 }
 
@@ -115,7 +131,10 @@ const styles = StyleSheet.create({
   buttons: {
     justifyContent: 'center',
     marginBottom: 150
-  }
+  },
+  loadingText:{
+    color: 'white'
+  },
  
 })
 

@@ -9,7 +9,7 @@ class EditProfilePicture extends Component{
     super(props);
 
     this.state = {
-      //hasPermission: null,
+      hasPermission: null,
       type: Camera.Constants.Type.back,
     }
   }

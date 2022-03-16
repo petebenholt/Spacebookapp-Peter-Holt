@@ -11,7 +11,7 @@ class EditProfileScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
-      //isLoading: true,
+      isLoading: true,
       allinfo: {},
       first_name: "",
       last_name: "",
@@ -55,7 +55,7 @@ class EditProfileScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-            //isLoading: false,
+            isLoading: false,
             allinfo: responseJson,
             first_name: this.state.allinfo.first_name,
             last_name: this.state.allinfo.last_name,
@@ -89,7 +89,7 @@ class EditProfileScreen extends Component {
       .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          //isLoading: false,
+          isLoading: false,
           allinfo: responseJson
           })
         })
@@ -100,6 +100,20 @@ class EditProfileScreen extends Component {
   
   
   render(){
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+           <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
     return (
       <View style={styles.container}>
         <Text style= {styles.textDetails}>First Name</Text>
@@ -115,14 +129,9 @@ class EditProfileScreen extends Component {
         placeholder = {this.state.allinfo.last_name}
         onChangeText={(last_name) => this.setState({last_name})}
         defaultValue = {this.state.allinfo.last_name}
-        //style={{padding:5, borderWidth:1, margin:5, borderRadius: 8}}
-        //borderColor= "white"
-        //color= 'white'
-        
         />
          <Text style= {styles.textDetails}>Email</Text>
         <TextInput style = {styles.textInput}
-        //placeholderTextColor= "white"
         placeholder = {this.state.allinfo.email}
         onChangeText={(email) => this.setState({email})}
         defaultValue = {this.state.allinfo.email}
@@ -157,7 +166,8 @@ class EditProfileScreen extends Component {
         />
         </View>
       </View>
-    );
+      );
+    }
   }
 }
 
@@ -185,6 +195,9 @@ const styles = StyleSheet.create({
       borderColor: 'white',
       color: 'white',
       placeholderTextColor: 'white'
+    },
+    loadingText:{
+      color: 'white'
     },
 
 });

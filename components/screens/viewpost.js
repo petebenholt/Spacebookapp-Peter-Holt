@@ -11,7 +11,8 @@ class ViewPost extends Component {
     this.state = {
       post: {},
       firstname: "",
-      lastname: ""
+      lastname: "",
+      isLoading: true
     }
   }
 
@@ -54,7 +55,8 @@ class ViewPost extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          post: responseJson
+          post: responseJson,
+          isLoading: false
         })
     })
     .catch((error) => {
@@ -110,10 +112,11 @@ class ViewPost extends Component {
     })
     .then((response) => {
       if(response.status === 200){
+        return console.log("OK")
       }else if(response.status === 401){
           throw 'Unauthorized'
       }else if(response.status === 403){
-        throw 'already liked this post'
+        throw 'Already liked this post'
       }else if(response.status === 404){
         throw 'Not Found'
       }else if(response.status === 500){
@@ -150,9 +153,22 @@ class ViewPost extends Component {
   }
 
   render() {
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>    
+        <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
     return (
       <View style = {styles.container}>
-      {/* <Text>{this.state.post.author.first_name}</Text> */}
       <View style = {styles.box}>
       <Text style = {styles.text}> {this.state.firstname} {this.state.lastname}</Text>
       <Text style = {styles.text}>{this.dateParser(this.state.post.timestamp)}</Text>
@@ -162,6 +178,7 @@ class ViewPost extends Component {
       </View>
       );
     }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -178,7 +195,9 @@ const styles = StyleSheet.create({
   text: {
     color: "black",
   },
- 
+  loadingText:{
+    color: 'white'
+  }, 
 })
 
 export default ViewPost;

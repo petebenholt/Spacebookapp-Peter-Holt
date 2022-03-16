@@ -13,7 +13,8 @@ class HomeScreen extends Component {
       postText: '',
       postedData: {},
       pfp: null,
-      info: {}
+      info: {},
+      isLoading: true
     }
   }
 
@@ -127,7 +128,7 @@ class HomeScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-            //isLoading: false,
+            isLoading: false,
             info: responseJson
         })
     })
@@ -162,6 +163,20 @@ class HomeScreen extends Component {
   }
 
   render() {
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+        <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
       return (
         <View style= {styles.container}>
           <View style= {styles.imagecontainer}>
@@ -234,7 +249,7 @@ class HomeScreen extends Component {
         </View>
       );
     }
-    
+  }
   
 }
 
@@ -257,16 +272,15 @@ class HomeScreen extends Component {
       padding: 20,
       backgroundColor: 'white',
       marginBottom: 10,
-      borderRadius: 15
-
+      borderRadius: 15,
+      marginRight: 5,
+      marginLeft: 5,
     },
     postButton: {
       marginBottom: 1,
       flexDirection: "row",
       justifyContent: "center"
-      
     },
-    
     postTextInput:{
       padding:5,
       borderWidth:1,
@@ -306,6 +320,9 @@ class HomeScreen extends Component {
     postsection:{
       flex: 8
     },
+    loadingText:{
+    color: 'white'
+  },
   })
 
 export default HomeScreen;

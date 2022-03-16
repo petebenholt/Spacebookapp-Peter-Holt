@@ -16,7 +16,8 @@ class FriendsScreen extends Component {
       last_name: "",
       gotuserID: [],
       matchedusers: [],
-      UserID: ""
+      UserID: "",
+      isLoading: true
     }
   }
 
@@ -69,9 +70,9 @@ class FriendsScreen extends Component {
         })
         .then((responseJson) => {
           this.setState({
-            listdata: responseJson
+            listdata: responseJson,
+            isLoading: false
           })
-        //this.getFriendsList();
         })
         .catch((error) => {
             console.log(error);
@@ -105,9 +106,9 @@ class FriendsScreen extends Component {
       })
       .then((responseJson) => {
         this.setState({
-          searchdata: responseJson
+          searchdata: responseJson,
+          isLoading: false
         })
-        //console.log(this.state.searchdata)
         this.splitnames();
         this.addFriend();
       })
@@ -145,11 +146,9 @@ getUserSearchQuery = async (name) => {
       })
       .then((responseJson) => {
         this.setState({
-          matchedusers: responseJson
+          matchedusers: responseJson,
+          isLoading: false
         })
-        //console.log(this.state.searchdata)
-        //this.splitnames();
-        //this.addFriend();
         console.log("success")
         this.getUserSearch();
       })
@@ -252,8 +251,22 @@ splitnames = () => {
   
   
   render() {
+    if (this.state.isLoading){
       return (
-          <View style= {Styles.container}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
+      return (
+          <View style= {styles.container}>
             <View>
               <TextInput
                 placeholder="Add Friend Name..."
@@ -268,8 +281,8 @@ splitnames = () => {
                 data={this.state.matchedusers}
                 keyExtractor={(item,index) => item.user_id.toString()}
                 renderItem={({item}) => (
-                  <View style= {Styles.box}>
-                    <Text style = {Styles.friendboxtext}>
+                  <View style= {styles.box}>
+                    <Text style = {styles.friendboxtext}>
                       {item.user_givenname} {item.user_familyname}
                     </Text>
                     <Button 
@@ -281,7 +294,7 @@ splitnames = () => {
                     )}
                 
               />
-              <View style= {Styles.friendButtons}>
+              <View style= {styles.friendButtons}>
               <Button
                 title="    Add Friend    "
                 color='purple'
@@ -302,17 +315,17 @@ splitnames = () => {
               </View>
               
             </View>
-              <View style = {Styles.friendListTextBox}>
-              <Text style= {Styles.friendlistText}>Friends List</Text>
+              <View style = {styles.friendListTextBox}>
+              <Text style= {styles.friendlistText}>Friends List</Text>
               </View>
               <FlatList
                 data={this.state.listdata}
                 renderItem={({item}) => (
-                  <View style= {Styles.box}>
-                    <Text style = {Styles.friendboxtext}>
+                  <View style= {styles.box}>
+                    <Text style = {styles.friendboxtext}>
                       {item.user_givenname} {item.user_familyname}
                     </Text>
-                    <View style= {Styles.viewProfileButtons}> 
+                    <View style= {styles.viewProfileButtons}> 
                     <Button 
                       title="View Profile"
                       color="purple"
@@ -327,9 +340,10 @@ splitnames = () => {
           </View>
       );
     }
+  }
 }
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex:1,
     backgroundColor: 'rgb(32,32,32)',
@@ -338,8 +352,9 @@ const Styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     marginBottom: 8,
-    borderRadius: 15
-
+    borderRadius: 15,
+    marginRight: 5,
+    marginLeft: 5,
   },
   friendboxtext: {
     color: 'black',
@@ -364,6 +379,9 @@ const Styles = StyleSheet.create({
     marginBottom: 1,
     flexDirection: "row",
     justifyContent: 'flex-end',
+  },
+  loadingText:{
+    color: 'white'
   },
 
 })

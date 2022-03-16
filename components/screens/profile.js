@@ -13,7 +13,8 @@ class ProfileScreen extends Component {
       newlist: [],
       info: {},
       pfp: null,
-      postedData: []
+      postedData: [],
+      isLoading: true
 
     }
   }
@@ -54,7 +55,7 @@ class ProfileScreen extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-            //isLoading: false,
+            isLoading: false,
             info: responseJson
         })
     })
@@ -102,7 +103,7 @@ class ProfileScreen extends Component {
     .then((responseJson) => {
         //console.log(responseJson);
         this.setState({
-          //isLoading: false,
+          isLoading: false,
           postedData: responseJson
         })
     })
@@ -122,13 +123,10 @@ class ProfileScreen extends Component {
         }
     })
     .then((response) => {
-        //console.log(response);
         this.getPosted();
-        //console.log("success")
-        // this.setState({
-        //   //isLoading: false,
-        //   //postedData: responseJson
-        // })
+        this.setState({
+          isLoading: false,
+        })
     })
     .then(() =>{
       
@@ -155,6 +153,20 @@ class ProfileScreen extends Component {
 
 
   render() {
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
     return (
       <View style= {styles.container}>
         
@@ -168,7 +180,7 @@ class ProfileScreen extends Component {
         </View>
         <View style = {styles.button}>
         <Button
-          title="Edit"
+          title="Edit Profile"
           color= "purple"
           onPress={() => this.props.navigation.navigate("Edit Profile")}
         />
@@ -196,10 +208,11 @@ class ProfileScreen extends Component {
               <Text style = {styles.text3}>Likes: {item.numLikes}</Text>
               <View style= {styles.likesbutton}>
               <Button
-                title = "Edit Post"
-                color = "blue"
+                title = "  Edit Post  "
+                color = "purple"
                 onPress={() => this.editPosted(item.post_id)}
               />
+              <Text> </Text>
               <Button
                 title = "Delete Post"
                 color = "red"
@@ -213,6 +226,7 @@ class ProfileScreen extends Component {
           </View>
       );
     }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -226,8 +240,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontWeight: 'bold',
-    fontSize: 10,
+    //fontWeight: 'bold',
+    fontSize: 12,
     marginRight: 10,
   },
   text2: {
@@ -259,8 +273,10 @@ const styles = StyleSheet.create({
   listbox: {
     padding: 20,
     backgroundColor: 'white',
-    marginBottom: 10
-
+    marginBottom: 10,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: 15,
   },
   buttonstyle: {
     marginBottom: 10,
@@ -291,7 +307,10 @@ const styles = StyleSheet.create({
   postscontainer:{
     flex: 8
 
-  }
+  },
+  loadingText:{
+    color: 'white'
+  },
 
 })
 

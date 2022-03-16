@@ -53,6 +53,7 @@ class EditPost extends Component {
     .then((responseJson) => {
         console.log(responseJson);
         this.setState({
+          isLoading: false,
           post: responseJson
         })
     })
@@ -95,18 +96,30 @@ class EditPost extends Component {
 
 
   render() {
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style = {styles.loadingText}>Loading..</Text>
+        </View>
+      );
+    }else{
     return (
-      <View>
-        <Text>Previous Text: {this.state.post.text}</Text>
+      <View style = {styles.container}>
+        <Text style = {styles.previousText}>Previous Text: {this.state.post.text}</Text>
         <TextInput
             placeholder="Edit Your Post..."
-            placeholderTextColor= 'black'
-            color= 'black'
+            placeholderTextColor= 'white'
             multiline = {true}
             onChangeText={(postText) => this.setState({postText})}
             value={this.state.postText}
-            style={{padding:5, borderWidth:1, margin:5}}
-            borderColor= "black"
+            style= {styles.editTextInput}
           />
           <Button 
           title = 'Edit Post'
@@ -115,7 +128,9 @@ class EditPost extends Component {
           />
       </View>
       );
+  
     }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -123,65 +138,24 @@ const styles = StyleSheet.create({
     flex:1,
     backgroundColor: 'rgb(32,32,32)',
   },
-  box: {
-    backgroundColor: 'rgb(255,255,255)',
-    padding: 10,
+  
+  loadingText:{
+    color: 'white'
   },
-  text: {
+  editTextInput:{
+    padding:5,
+    borderWidth:1,
+    margin:5,
+    borderRadius: 8,
+    borderColor: 'white',
     color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
+    placeholderTextColor: 'white'
   },
-  text2: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 24,
-    justifyContent: 'center',
-  },
-  text3: {
-    color: 'black',
-    //fontWeight: 'bold',
-    //fontSize: 24,
-    justifyContent: 'center',
-  },
-  feedtext: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 10,
-    
-  },
-  textbox: {
-   marginLeft: 130,
-  },
-  button: {
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    padding:1,
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
-  },
-  listbox: {
-    padding: 20,
-    backgroundColor: 'white',
-    marginBottom: 10
-
-  },
-  buttonstyle: {
-    marginBottom: 10,
-  },
-  likesbutton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginRight:10,
-  },
-  image: {
-    backgroundColor: 'black',
+  previousText:{
+    color: 'white'
 
 
-  },
-
+  }
 })
 
 export default EditPost;

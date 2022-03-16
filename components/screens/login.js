@@ -53,31 +53,27 @@ class LoginScreen extends Component{
                     <TextInput
                         placeholder="Enter your email..."
                         placeholderTextColor= 'white'
-                        color= 'white'
                         onChangeText={(email) => this.setState({email})}
                         value={this.state.email}
-                        style={{padding:5, borderWidth:1, margin:5}}
-                        borderColor= "black"
+                        style={styles.textInput}
                     />
                     <TextInput
                         placeholder="Enter your password..."
                         placeholderTextColor= 'white'
-                        color= 'white'
                         onChangeText={(password) => this.setState({password})}
                         value={this.state.password}
                         secureTextEntry
-                        borderColor= "black"
-                        style={{padding:5, borderWidth:1, margin:5}}
+                        style={styles.textInput}
                     />
                     <Button
                         title="Login"
-                        
-                        color="black"
+                        color="purple"
                         onPress={() => this.login()}
                     />
+                    <Text> </Text>
                     <Button
                         title="Make an account?"
-                        color="darkred"
+                        color="red"
                         onPress={() => this.props.navigation.navigate("Signup")}
                     />
                   </View>
@@ -95,14 +91,22 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     fontWeight: 'bold',
-    marginLeft: 55,
+    marginLeft: 45,
     fontSize: 24,
   },
   box: {
-    backgroundColor: 'purple',
+    backgroundColor: 'black',
     padding: 20,
-
-  }
+  },
+  textInput:{
+    padding:5,
+    borderWidth:1,
+    margin:5,
+    borderRadius: 8,
+    borderColor: 'white',
+    color: 'white',
+    placeholderTextColor: 'white'
+  },
 })
 
 

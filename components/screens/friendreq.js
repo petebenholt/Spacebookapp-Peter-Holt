@@ -10,7 +10,7 @@ class FriendsreqScreen extends Component {
     
     this.state = {
       listdata: [],
-      refresh: false
+      isLoading: true
     }
   }
   componentDidMount() {
@@ -18,7 +18,6 @@ class FriendsreqScreen extends Component {
       this.checkLoggedIn();
 
     });
-
    this.getFriendsReq();
   };
 
@@ -34,14 +33,12 @@ class FriendsreqScreen extends Component {
   };
 
   getFriendsReq = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    const value2 = await AsyncStorage.getItem('@user_id');
-    console.log(value2)
+    const sessiontoken = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/friendrequests", {
-      method: 'get',
+      method: 'GET',
       headers: {
           'Content-Type': 'application/json',
-          'X-Authorization':  value
+          'X-Authorization':  sessiontoken
           },
       })
         .then((response) => {
@@ -55,8 +52,10 @@ class FriendsreqScreen extends Component {
         })
         .then((responseJson) => {
           this.setState({
-            listdata: responseJson
+            listdata: responseJson,
+            isLoading: false
           })
+          console.log(this.state.listdata);
         })
         .catch((error) => {
             console.log(error);
@@ -66,7 +65,7 @@ class FriendsreqScreen extends Component {
   addFriendreq = async (UserID) => {
     const value = await AsyncStorage.getItem('@session_token');
     return fetch("http://localhost:3333/api/1.0.0/friendrequests/"+UserID, {
-      method: 'post',
+      method: 'POST',
       headers: {
           'Content-Type': 'application/json',
           'X-Authorization':  value
@@ -133,6 +132,35 @@ class FriendsreqScreen extends Component {
   
 
   render(){
+    if (this.state.isLoading){
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(32,32,32)',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Loading..</Text>
+        </View>
+      );
+    }else if(this.state.listdata.length === 0){
+      return(
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgb(32,32,32)',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          
+        <Text style= {{
+          color:'white', fontSize: 20, marginBottom: 100}}
+          >No Friends Requests!</Text>
+        </View>
+      )
+    }else{
     return(
       <View style= {styles.container}>
         <FlatList
@@ -159,10 +187,9 @@ class FriendsreqScreen extends Component {
             </View>
               )}
           />
-        
       </View>
-
-    );
+      );
+    }
   }
 }
 const styles = StyleSheet.create({
@@ -188,8 +215,10 @@ const styles = StyleSheet.create({
   },
   box: {
     backgroundColor: 'white',
-    borderRadius: 15
-    
+    borderRadius: 15,
+    marginRight: 5,
+    marginLeft: 5,
+    marginTop: 5
   },
  
 })
