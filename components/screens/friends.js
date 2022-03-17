@@ -1,24 +1,31 @@
-import React, {Component} from 'react';
-import {View, Text, FlatList, Button, StyleSheet, TextInput} from 'react-native';
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-throw-literal */
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable no-use-before-define */
+/* eslint-disable linebreak-style */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/destructuring-assignment */
+import React, { Component } from 'react';
+import {
+  View, Text, FlatList, Button, StyleSheet, TextInput,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
 class FriendsScreen extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
       listdata: [],
       searchdata: [],
-      name: "",
-      first_name: "",
-      last_name: "",
+      name: '',
+      first_name: '',
+      last_name: '',
       gotuserID: [],
       matchedusers: [],
-      UserID: "",
-      isLoading: true
-    }
+      UserID: '',
+      isLoading: true,
+    };
   }
 
   componentDidMount() {
@@ -27,231 +34,198 @@ class FriendsScreen extends Component {
     });
     this.getData();
     this.getFriendsList();
-  };
+  }
 
   componentWillUnmount() {
     this.unsubscribe();
-  };
+  }
 
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     if (value == null) {
-        this.props.navigation.navigate('Login');
+      this.props.navigation.navigate('Login');
     }
   };
 
   getData = async () => {
     const UserID = await AsyncStorage.getItem('@user_id');
-    let UserID2 = UserID;
+    const UserID2 = UserID;
     this.state.UserID = UserID2;
-  
-  }
-  
+  };
 
   getFriendsList = async () => {
     const value = await AsyncStorage.getItem('@session_token');
     const value2 = await AsyncStorage.getItem('@user_id');
-    //console.log(value2)
-    return fetch("http://localhost:3333/api/1.0.0/user/"+value2+"/friends", {
+    return fetch(`http://localhost:3333/api/1.0.0/user/${value2}/friends`, {
       method: 'get',
       headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization':  value
-          },
-      })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-              this.props.navigation.navigate("Login");
-            }else{
-                throw 'Something went wrong';
-            }
-        })
-        .then((responseJson) => {
-          this.setState({
-            listdata: responseJson,
-            isLoading: false
-          })
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-  }
-  
-  FriendsProfile= async (frienduserid)=>{
-    await AsyncStorage.setItem('other-user_id', frienduserid.toString());
-    this.props.navigation.navigate("Friends Profile");
-  }
-  
- getUserSearch = async () => {
-  const value = await AsyncStorage.getItem('@session_token');
-  const value2 = await AsyncStorage.getItem('@user_id');
-  console.log(value2)
-  return fetch("http://localhost:3333/api/1.0.0/search", {
-    method: 'get',
-    headers: {
         'Content-Type': 'application/json',
-        'X-Authorization':  value
-        },
+        'X-Authorization': value,
+      },
     })
       .then((response) => {
-          if(response.status === 200){
-              return response.json()
-          }else if(response.status === 401){
-            this.props.navigation.navigate("Login");
-          }else{
-              throw 'Something went wrong';
-          }
+        if (response.status === 200) {
+          return response.json();
+        } if (response.status === 401) {
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        this.setState({
+          listdata: responseJson,
+          isLoading: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  FriendsProfile = async (frienduserid) => {
+    await AsyncStorage.setItem('other-user_id', frienduserid.toString());
+    this.props.navigation.navigate('Friends Profile');
+  };
+
+  getUserSearch = async () => {
+    const sessiontoken = await AsyncStorage.getItem('@session_token');
+    return fetch('http://localhost:3333/api/1.0.0/search', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': sessiontoken,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } if (response.status === 401) {
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
       })
       .then((responseJson) => {
         this.setState({
           searchdata: responseJson,
-          isLoading: false
-        })
+          isLoading: false,
+        });
         this.splitnames();
         this.addFriend();
       })
       .catch((error) => {
-          console.log(error);
-      })
-  
-}
+        console.log(error);
+      });
+  };
 
-
-getUserSearchQuery = async (name) => {
-  const value = await AsyncStorage.getItem('@session_token');
-  const value2 = await AsyncStorage.getItem('@user_id');
-
-  console.log(value2) 
-  if(this.state.name == ""){ //clears the list if nothing in state
-    this.state.matchedusers == []
-  }
-  else{
-  return fetch("http://localhost:3333/api/1.0.0/search?q=" + name, {
-    method: 'get',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Authorization':  value
+  getUserSearchQuery = async (name) => {
+    const sessiontoken = await AsyncStorage.getItem('@session_token');
+    if (this.state.name == '') { // clears the list if nothing in state
+      this.state.matchedusers == [];
+    } else {
+      return fetch(`http://localhost:3333/api/1.0.0/search?q=${name}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': sessiontoken,
         },
-    })
-      .then((response) => {
-          if(response.status === 200){
-              return response.json()
-          }else if(response.status === 401){
-            this.props.navigation.navigate("Login");
-          }else{
-              throw 'Something went wrong';
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } if (response.status === 401) {
+            this.props.navigation.navigate('Login');
+          } else {
+            throw 'Something went wrong';
           }
-      })
-      .then((responseJson) => {
-        this.setState({
-          matchedusers: responseJson,
-          isLoading: false
         })
-        console.log("success")
-        this.getUserSearch();
-      })
-      .catch((error) => {
+        .then((responseJson) => {
+          this.setState({
+            matchedusers: responseJson,
+            isLoading: false,
+          });
+          console.log('success');
+          this.getUserSearch();
+        })
+        .catch((error) => {
           console.log(error);
-      })
+        });
     }
-}
-splitnames = () => {
-  let namedata = this.state.name;
-  let searchdata2 = this.state.searchdata;
-  
-  let myArray = namedata.split(" ");
-  //console.log(myArray);
-  this.state.first_name = myArray[0];
-  this.state.last_name = myArray[1];
-  //console.log(searchdata2);
-  
-  for (let i = 0; i < searchdata2.length; i++) {
-    //console.log(searchdata2[i].user_givenname);
-    if(searchdata2[i].user_givenname == this.state.first_name){
-      console.log(searchdata2[i].user_givenname);
-      console.log(searchdata2[i].user_id);
-      this.state.gotuserID = searchdata2[i].user_id;
-      this.state.matchedusers = searchdata2[i].user_id;
+  };
+
+  splitnames = () => {
+    const namedata = this.state.name;
+    const searchdata2 = this.state.searchdata;
+    const myArray = namedata.split(' ');          
+    this.state.first_name = myArray[0];        
+    this.state.last_name = myArray[1];
+    for (let i = 0; i < searchdata2.length; i++) {
+      if (searchdata2[i].user_givenname == this.state.first_name) {
+        this.state.gotuserID = searchdata2[i].user_id;
+        this.state.matchedusers = searchdata2[i].user_id; //purpose of this is to split the name in two states so it can get the id from the name
+
+      }
     }
-  
-  }
-  //console.log(this.state.gotUserID)
-}
+  };
 
   addFriend = async () => {
     const value = await AsyncStorage.getItem('@session_token');
-    //const value2 = await AsyncStorage.getItem('@user_id');
-    let gotUserID = this.state.gotuserID;
-    return fetch("http://localhost:3333/api/1.0.0/user/"+gotUserID+"/friends", {
-      method: 'post',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization':  value
-          },
-      })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-              this.props.navigation.navigate("Login");
-            }else if(response.status === 403){
-              console.log("User is already added as a friend")
-            }else if(response.status === 404){
-              console.log("Not Found")
-            }
-            else{
-                throw 'server error';
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    
-  }
-  addMatchedFriend = async (userid) => {
-    const value = await AsyncStorage.getItem('@session_token');
-    //const value2 = await AsyncStorage.getItem('@user_id');
-    let gotUserID = this.state.gotuserID;
-    return fetch("http://localhost:3333/api/1.0.0/user/"+userid+"/friends", {
+    const gotUserID = this.state.gotuserID;
+    return fetch(`http://localhost:3333/api/1.0.0/user/${gotUserID}/friends`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization':  value
-          },
+        'Content-Type': 'application/json',
+        'X-Authorization': value,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } if (response.status === 401) {
+          this.props.navigation.navigate('Login');
+        } else if (response.status === 403) {
+          throw 'User is already added as a friend';
+        } else if (response.status === 404) {
+          throw 'Not Found';
+        } else {
+          throw 'Server Error';
+        }
       })
-        .then((response) => {
-            if(response.status === 200){
-                return response.json()
-            }else if(response.status === 401){
-              this.props.navigation.navigate("Login");
-            }else if(response.status === 403){
-              console.log("User is already added as a friend")
-            }else if(response.status === 404){
-              console.log("Not Found")
-            }
-            else{
-                throw 'server error';
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-    
-  }
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  friendReset = async ()=>{ //function that clear
-    if(this.state.name == ""){
-      this.state.matchedusers = [];
-    }
-  }
+  addMatchedFriend = async (userid) => {
+    const value = await AsyncStorage.getItem('@session_token');
+    return fetch(`http://localhost:3333/api/1.0.0/user/${userid}/friends`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': value,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } if (response.status === 401) {
+          this.props.navigation.navigate('Login');
+        } else if (response.status === 403) {
+          throw 'User is already added as a friend';
+        } else if (response.status === 404) {
+         throw 'Not Found';
+        } else {
+          throw 'Server error';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
- 
-  
-  
   render() {
-    if (this.state.isLoading){
+    if (this.state.isLoading) {
       return (
         <View
           style={{
@@ -260,90 +234,91 @@ splitnames = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-          }}>
-          <Text style = {styles.loadingText}>Loading..</Text>
+          }}
+        >
+          <Text style={styles.loadingText}>Loading..</Text>
         </View>
       );
-    }else{
-      return (
-          <View style= {styles.container}>
-            <View>
-              <TextInput
-                placeholder="Add Friend Name..."
-                placeholderTextColor= 'white'
-                style={styles.textInput}
-                onChangeText={(name) => this.setState({name})}
-                value={this.state.name}
-              />
-              <FlatList
-                data={this.state.matchedusers}
-                keyExtractor={(item,index) => item.user_id.toString()}
-                renderItem={({item}) => (
-                  <View style= {styles.box}>
-                    <Text style = {styles.friendboxtext}>
-                      {item.user_givenname} {item.user_familyname}
-                    </Text>
-                    <Button 
-                      title="Add"
-                      color="purple"
-                      onPress={() => this.addMatchedFriend(item.user_id.toString())}
-                    />
-                  </View>
-                    )}
-                
-              />
-              <View style= {styles.friendButtons}>
-              <Button
-                title="    Add Friend    "
-                color='purple'
-                onPress={() => this.getUserSearch()}
-                
-              />
-              <Button
-                title=" Search Friend "
-                color='purple'
-                onPress={() => this.getUserSearchQuery(this.state.name)}
-                
-              />
-              <Button 
-                title="Friend Requests"
-                color="purple"
-                onPress={() => this.props.navigation.navigate("Friend Requests")}
-              />
-              </View>
-              
-            </View>
-              <View style = {styles.friendListTextBox}>
-              <Text style= {styles.friendlistText}>Friends List</Text>
-              </View>
-              <FlatList
-                data={this.state.listdata}
-                renderItem={({item}) => (
-                  <View style= {styles.box}>
-                    <Text style = {styles.friendboxtext}>
-                      {item.user_givenname} {item.user_familyname}
-                    </Text>
-                    <View style= {styles.viewProfileButtons}> 
-                    <Button 
-                      title="View Profile"
-                      color="purple"
-                      onPress={() => this.FriendsProfile(item.user_id)}
-                    />
-                    </View>
-                    
-                  </View>
-                    )}
-                keyExtractor={(item,index) => item.user_id.toString()}
-              />
-          </View>
-      );
     }
+    return (
+      <View style={styles.container}>
+        <View>
+          <TextInput
+            placeholder="Add Friend Name..."
+            placeholderTextColor="white"
+            style={styles.textInput}
+            onChangeText={(name) => this.setState({ name })}
+            value={this.state.name}
+          />
+          <FlatList
+            data={this.state.matchedusers}
+            keyExtractor={(item) => item.user_id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.box}>
+                <Text style={styles.friendboxtext}>
+                  {item.user_givenname}
+                  {' '}
+                  {item.user_familyname}
+                </Text>
+                <Button
+                  title="Add"
+                  color="purple"
+                  onPress={() => this.addMatchedFriend(item.user_id.toString())}
+                />
+              </View>
+            )}
+          />
+          <View style={styles.friendButtons}>
+            <Button
+              title="    Add Friend    "
+              color="purple"
+              onPress={() => this.getUserSearch()}
+            />
+            <Button
+              title=" Search Friend "
+              color="purple"
+              onPress={() => this.getUserSearchQuery(this.state.name)}
+            />
+            <Button
+              title="Friend Requests"
+              color="purple"
+              onPress={() => this.props.navigation.navigate('Friend Requests')}
+            />
+          </View>
+
+        </View>
+        <View style={styles.friendListTextBox}>
+          <Text style={styles.friendlistText}>Friends List</Text>
+        </View>
+        <FlatList
+          data={this.state.listdata}
+          renderItem={({ item }) => (
+            <View style={styles.box}>
+              <Text style={styles.friendboxtext}>
+                {item.user_givenname}
+                {' '}
+                {item.user_familyname}
+              </Text>
+              <View style={styles.viewProfileButtons}>
+                <Button
+                  title="View Profile"
+                  color="purple"
+                  onPress={() => this.FriendsProfile(item.user_id)}
+                />
+              </View>
+
+            </View>
+          )}
+          keyExtractor={(item, index) => item.user_id.toString()}
+        />
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     backgroundColor: 'rgb(32,32,32)',
   },
   box: {
@@ -354,19 +329,19 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginLeft: 5,
   },
-  textInput:{
-    padding:5,
-    borderWidth:1,
-    margin:5,
+  textInput: {
+    padding: 5,
+    borderWidth: 1,
+    margin: 5,
     borderRadius: 8,
     borderColor: 'white',
     color: 'white',
     placeholderTextColor: 'white',
-    numberOfLines: "2"
+    numberOfLines: '2',
   },
   friendboxtext: {
     color: 'black',
-    //fontWeight: 'bold',
+    // fontWeight: 'bold',
     fontSize: 15,
   },
   friendlistText: {
@@ -376,22 +351,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   friendListTextBox: {
-   marginLeft: 130,
+    marginLeft: 130,
   },
   friendButtons: {
     marginBottom: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
   viewProfileButtons: {
     marginBottom: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     justifyContent: 'flex-end',
   },
-  loadingText:{
-    color: 'white'
+  loadingText: {
+    color: 'white',
   },
 
-})
+});
 
 export default FriendsScreen;

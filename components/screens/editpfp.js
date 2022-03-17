@@ -1,92 +1,98 @@
+/* eslint-disable no-throw-literal */
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable no-use-before-define */
+/* eslint-disable linebreak-style */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet, Text, View, TouchableOpacity,
+} from 'react-native';
 import { Camera } from 'expo-camera';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-class EditProfilePicture extends Component{
-  constructor(props){
+class EditProfilePicture extends Component {
+  constructor(props) {
     super(props);
 
     this.state = {
       hasPermission: null,
       type: Camera.Constants.Type.back,
-    }
+    };
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const { status } = await Camera.requestCameraPermissionsAsync();
-    this.setState({hasPermission: status === 'granted'});
+    this.setState({ hasPermission: status === 'granted' });
   }
 
   sendToServer = async (data) => {
-      // Get these from AsyncStorage
-      console.log("called")
-      const sessionvalue = await AsyncStorage.getItem('@session_token');
-      const UserIDvalue = await AsyncStorage.getItem('@user_id');
-      console.log("login details received")
+    // Get these from AsyncStorage
+    console.log('called');
+    const sessionvalue = await AsyncStorage.getItem('@session_token');
+    const UserIDvalue = await AsyncStorage.getItem('@user_id');
+    console.log('login details received');
 
-      let res = await fetch(data.base64);
-      console.log("data fetched")
-      let blob = await res.blob();
-      console.log("data blobbed")
+    const res = await fetch(data.base64);
+    console.log('data fetched');
+    const blob = await res.blob();
+    console.log('data blobbed');
 
-      return fetch("http://localhost:3333/api/1.0.0/user/"+UserIDvalue+"/photo", {
-          method: "POST",
-          headers: {
-              "Content-Type": "image/png",
-              "X-Authorization": sessionvalue
-          },
-          body: blob
-      })
+    return fetch(`http://localhost:3333/api/1.0.0/user/${UserIDvalue}/photo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'image/png',
+        'X-Authorization': sessionvalue,
+      },
+      body: blob,
+    })
       .then((response) => {
-          console.log("Picture added", response);
+        console.log('Picture added', response);
       })
       .catch((err) => {
-          console.log(err);
-      })
-  }
+        console.log(err);
+      });
+  };
 
-    takePicture = async () => {
-        if(this.camera){
-            const options = {
-                quality: 0.5, 
-                base64: true,
-                onPictureSaved: (data) => this.sendToServer(data)
-            };
-            await this.camera.takePictureAsync(options);
-        } 
+  takePicture = async () => {
+    if (this.camera) {
+      const options = {
+        quality: 0.5,
+        base64: true,
+        onPictureSaved: (data) => this.sendToServer(data),
+      };
+      await this.camera.takePictureAsync(options);
     }
+  };
 
-  render(){
-    if(this.state.hasPermission){
-      return(
+  render() {
+    if (this.state.hasPermission) {
+      return (
         <View style={styles.container}>
-          <Camera 
-            style={styles.camera} 
+          <Camera
+            style={styles.camera}
             type={this.state.type}
-            ref={ref => this.camera = ref}
+            ref={(ref) => this.camera = ref}
           >
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
                   this.takePicture();
-                }}>
+                }}
+              >
                 <Text style={styles.text}> Take Photo </Text>
               </TouchableOpacity>
             </View>
           </Camera>
         </View>
       );
-    }else{
-      return(
-        <Text>No access to camera</Text>
-      );
     }
+    return (
+      <Text>No access to camera</Text>
+    );
   }
 }
-
 
 const styles = StyleSheet.create({
   container: {
